@@ -1,59 +1,73 @@
-import React from 'react';
-import OwlCarousel from 'react-owl-carousel';
-import { Link } from 'react-router-dom';
-import 'owl.carousel/dist/assets/owl.carousel.css';
-import 'owl.carousel/dist/assets/owl.theme.default.css';
+import React from "react";
+import Slider from "react-slick";
+import { Link } from "react-router-dom";
+import { Box, Typography, Card, CardMedia, CardContent } from "@mui/material";
 
 const Trending = ({ blogs }) => {
-  const options = {
-    loop: true,
-    margin: 10,
-    nav: true,
-    responsive: {
-      0: {
-        items: 1,
+  const settings = {
+    dots: false,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 4,
+    slidesToScroll: 1,
+    responsive: [
+      {
+        breakpoint: 1000,
+        settings: { slidesToShow: 3 },
       },
-      400: {
-        items: 2,
+      {
+        breakpoint: 600,
+        settings: { slidesToShow: 2 },
       },
-      600: {
-        items: 3,
+      {
+        breakpoint: 400,
+        settings: { slidesToShow: 1 },
       },
-      1000: {
-        items: 4,
-      },
-    },
+    ],
   };
+
   return (
-    <>
-      <div>
-        <div className="blog-heading text-start py-2 mb-4">Trending</div>
-      </div>
-      <OwlCarousel className="owl-theme" {...options}>
+    <Box sx={{ mb: 4 }}>
+      <Typography variant="h4" sx={{ mb: 2 }}>
+        Trending
+      </Typography>
+      <Slider {...settings}>
         {blogs?.map((item) => (
-          <div className="item px-2" key={item.id}>
-            <Link to={`/detail/${item.id}`}>
-              <div className="trending-img-position">
-                <div className="trending-img-size">
-                  <img
-                    src={item.imgUrl}
-                    alt={item.title}
-                    className="trending-img-relative"
-                  />
-                </div>
-                <div className="trending-img-absolute"></div>
-                <div className="trending-img-absolute-1">
-                  <span className="text-white">{item.title}</span>
-                  <div className="trending-meta-info">
-                    {item.author} - {item.timestamp.toDate().toDateString()}
-                  </div>
-                </div>
-              </div>
-            </Link>
-          </div>
+          <Box key={item.id} px={1}>
+            <Card sx={{ position: "relative" }}>
+              <Link
+                to={`/detail/${item.id}`}
+                style={{ textDecoration: "none" }}
+              >
+                <CardMedia
+                  component="img"
+                  height="180"
+                  image={item.imgUrl}
+                  alt={item.title}
+                  sx={{ objectFit: "cover" }}
+                />
+                <Box
+                  sx={{
+                    position: "absolute",
+                    bottom: 0,
+                    width: "100%",
+                    bgcolor: "rgba(0, 0, 0, 0.6)",
+                    color: "white",
+                    px: 2,
+                    py: 1,
+                  }}
+                >
+                  <Typography variant="subtitle1">{item.title}</Typography>
+                  <Typography variant="caption">
+                    {item.author} — {item.timestamp.toDate().toDateString()}
+                  </Typography>
+                </Box>
+              </Link>
+            </Card>
+          </Box>
         ))}
-      </OwlCarousel>
-    </>
+      </Slider>
+    </Box>
   );
 };
 

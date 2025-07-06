@@ -1,106 +1,99 @@
 import React from "react";
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+  Box,
+  Avatar,
+  IconButton,
+  Menu,
+  MenuItem,
+} from "@mui/material";
 import { Link } from "react-router-dom";
-import transitions from "bootstrap";
+import MenuIcon from "@mui/icons-material/Menu";
 
 const Header = ({ active, setActive, user, handleLogout }) => {
   const userId = user?.uid;
+
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
+
+  const handleMenuOpen = (event) => setAnchorEl(event.currentTarget);
+  const handleMenuClose = () => setAnchorEl(null);
+
+  const navItems = [
+    { label: "Its Your Story", path: "/", key: "home" },
+    { label: "Create", path: "/create", key: "create" },
+    { label: "About", path: "/about", key: "about" },
+  ];
+
   return (
-    <nav className="navbar navbar-expand-lg navbar-light bg-light">
-      <div className="container-fluid bg-faded padding-media">
-        <div className="container padding-media">
-          <nav className="navbar navbar-toggleable-md navbar-light">
-            <button
-              className="navbar-toggler mt-3"
-              type="button"
-              data-bs-toggle="collapse"
-              data-bs-target="#navbarSupportedContent"
-              data-bs-parent="#navbarSupportedContent"
-              aria-controls="navbarSupportedContent"
-              aria-expanded="true"
-              aria-label="Toggle Navigation"
+    <AppBar position="static" color="default" sx={{ mb: 3 }}>
+      <Toolbar sx={{ justifyContent: "space-between" }}>
+        {/* Left navigation */}
+        <Box sx={{ display: "flex", gap: 2 }}>
+          {navItems.map((item) => (
+            <Button
+              key={item.key}
+              component={Link}
+              to={item.path}
+              color={active === item.key ? "primary" : "inherit"}
+              onClick={() => setActive(item.key)}
             >
-              <span className="fa fa-bars"></span>
-            </button>
-            <div
-              className="collapse navbar-collapse"
-              id="navbarSupportedContent"
+              {item.label}
+            </Button>
+          ))}
+        </Box>
+
+        {/* Right side: Login/Profile */}
+        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+          {userId ? (
+            <>
+              <Avatar
+                src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                alt="profile"
+                sx={{ width: 32, height: 32, cursor: "pointer" }}
+                onClick={handleMenuOpen}
+              />
+              <Typography variant="body2">{user?.displayName}</Typography>
+
+              <Menu
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleMenuClose}
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "right",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+              >
+                <MenuItem
+                  onClick={() => {
+                    handleMenuClose();
+                    handleLogout();
+                  }}
+                >
+                  Logout
+                </MenuItem>
+              </Menu>
+            </>
+          ) : (
+            <Button
+              component={Link}
+              to="/auth"
+              color={active === "login" ? "primary" : "inherit"}
+              onClick={() => setActive("login")}
             >
-              <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-                <Link to="/" style={{ textDecoration: "none" }}>
-                  <li
-                    className={`nav-item nav-link ${
-                      active === "home" ? "active" : ""
-                    }`}
-                    onClick={() => setActive("home")}
-                  >
-                    Its Your Story
-                  </li>
-                </Link>
-
-                <Link to="/create" style={{ textDecoration: "none" }}>
-                  <li
-                    className={`nav-item nav-link ${
-                      active === "create" ? "active" : ""
-                    }`}
-                    onClick={() => setActive("create")}
-                  >
-                    Create
-                  </li>
-                </Link>
-
-                <Link to="/about" style={{ textDecoration: "none" }}>
-                  <li
-                    className={`nav-item nav-link ${
-                      active === "about" ? "active" : ""
-                    }`}
-                    onClick={() => setActive("about")}
-                  >
-                    About
-                  </li>
-                </Link>
-              </ul>
-              <div className="row g-3">
-                <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-                  {userId ? (
-                    <>
-                      <div className="profile-logo">
-                        <img
-                          src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
-                          alt="logo"
-                          style={{
-                            width: "30px",
-                            height: "30px",
-                            borderRadius: "50%",
-                            marginTop: "12px",
-                          }}
-                        />
-                      </div>
-                      <p style={{ marginTop: "12px", marginLeft: "5px" }}>
-                        {user?.displayName}
-                      </p>
-                      <li className="nav-item nav-link" onClick={handleLogout}>
-                        Logout
-                      </li>
-                    </>
-                  ) : (
-                    <Link to="/auth" style={{ textDecoration: "none" }}>
-                      <li
-                        className={`nav-item nav-link ${
-                          active === "login" ? "active" : ""
-                        }`}
-                        onClick={() => setActive("login")}
-                      >
-                        Login
-                      </li>
-                    </Link>
-                  )}
-                </ul>
-              </div>
-            </div>
-          </nav>
-        </div>
-      </div>
-    </nav>
+              Login
+            </Button>
+          )}
+        </Box>
+      </Toolbar>
+    </AppBar>
   );
 };
 
