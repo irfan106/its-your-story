@@ -16,7 +16,6 @@ import { excerpt } from "../utility";
 
 const BlogSection = ({ blogs, user, handleDelete }) => {
   const userId = user?.uid;
-
   return (
     <Box>
       <Typography variant="h4" sx={{ mb: 4, mt: 2 }}>
@@ -98,6 +97,18 @@ const BlogSection = ({ blogs, user, handleDelete }) => {
           </Box>
         </Card>
       ))}
+      <Grid item xs={12}>
+        <Box sx={{ textAlign: "center", mt: 2 }}>
+          <Button
+            variant="outlined"
+            color="primary"
+            component={Link}
+            to="/explore"
+          >
+            View More Stories
+          </Button>
+        </Box>
+      </Grid>
     </Box>
   );
 };
