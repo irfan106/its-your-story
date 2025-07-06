@@ -19,7 +19,7 @@ const initialState = {
 const Auth = ({ setActive, setUser }) => {
   const [state, setState] = useState(initialState);
   const [signUp, setSignUp] = useState(false);
-
+  //checks
   const { email, password, firstName, lastName, confirmPassword } = state;
 
   const navigate = useNavigate();
