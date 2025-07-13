@@ -2,11 +2,47 @@ const { db } = require("./firebase");
 
 const resolvers = {
   Query: {
-    blogs: async (_, { limit = 5, page = 1 }) => {
+    blogs: async (_, { limit = 10, page = 1, latestOnly = false }) => {
+      let query = db.collection("blogs");
+      query = query.orderBy("timestamp", "desc");
+
+      if (latestOnly) {
+        query = query.limit(limit);
+      } else {
+        query = query.offset((page - 1) * limit).limit(limit);
+      }
+
+      const snapshot = await query.get();
+      return snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+        timestamp: doc.data().timestamp.toDate().toISOString(),
+      }));
+    },
+
+    trendingBlogs: async (_, { limit = 10 }) => {
+      try {
+        const snapshot = await db
+          .collection("blogs")
+          .where("trending", "==", "yes")
+          .limit(limit)
+          .get();
+
+        return snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+          timestamp: doc.data().timestamp?.toDate?.().toISOString() || null,
+        }));
+      } catch (error) {
+        console.error("Error in trendingBlogs resolver:", error);
+        return [];
+      }
+    },
+
+    mostPopularBlogs: async (_, { limit = 5 }) => {
       const snapshot = await db
         .collection("blogs")
-        .orderBy("timestamp", "desc")
-        .offset((page - 1) * limit)
+        .orderBy("views", "desc")
         .limit(limit)
         .get();
 
@@ -15,6 +51,39 @@ const resolvers = {
         ...doc.data(),
         timestamp: doc.data().timestamp.toDate().toISOString(),
       }));
+    },
+
+    blogTags: async () => {
+      const snapshot = await db.collection("blogs").get();
+      const allTags = snapshot.docs.flatMap((doc) => doc.data().tags || []);
+      return [...new Set(allTags)];
+    },
+
+    blogsByPage: async (_, { page = 1, pageSize = 6 }) => {
+      const offset = (page - 1) * pageSize;
+
+      let queryRef = db
+        .collection("blogs")
+        .orderBy("timestamp", "desc")
+        .offset(offset)
+        .limit(pageSize);
+
+      const snapshot = await queryRef.get();
+
+      const data = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+        timestamp: doc.data().timestamp?.toDate?.().toISOString?.() || null,
+      }));
+
+      const countSnap = await db.collection("blogs").count().get();
+      const total = countSnap.data().count;
+
+      return {
+        blogs: data,
+        currentPage: page,
+        totalPages: Math.ceil(total / pageSize),
+      };
     },
   },
 };

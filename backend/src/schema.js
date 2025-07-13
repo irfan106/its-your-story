@@ -7,11 +7,23 @@ const typeDefs = gql`
     description: String!
     imgUrl: String
     author: String
+    userId: String
+    category: String
+    tags: [String]
     timestamp: String
+    views: Int
   }
-
+  type PaginatedBlogs {
+    blogs: [Blog!]!
+    currentPage: Int!
+    totalPages: Int!
+  }
   type Query {
-    blogs(limit: Int, page: Int): [Blog]
+    blogs(limit: Int, page: Int, latestOnly: Boolean): [Blog]
+    trendingBlogs(limit: Int): [Blog]
+    mostPopularBlogs(limit: Int): [Blog]
+    blogTags: [String]
+    blogsByPage(page: Int, pageSize: Int): PaginatedBlogs!
   }
 `;
 

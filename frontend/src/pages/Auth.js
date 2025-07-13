@@ -7,6 +7,7 @@ import React, { useState } from "react";
 import { toast } from "react-toastify";
 import { auth } from "../firebase";
 import { useNavigate } from "react-router-dom";
+import { useAppContext } from "../context/AppContext";
 
 const initialState = {
   firstName: "",
@@ -16,9 +17,10 @@ const initialState = {
   confirmPassword: "",
 };
 
-const Auth = ({ setActive, setUser }) => {
+const Auth = () => {
   const [state, setState] = useState(initialState);
   const [signUp, setSignUp] = useState(false);
+  const { setUser, setActive } = useAppContext();
   const { email, password, firstName, lastName, confirmPassword } = state;
 
   const navigate = useNavigate();

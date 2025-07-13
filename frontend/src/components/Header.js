@@ -20,19 +20,31 @@ import {
 import MenuIcon from "@mui/icons-material/Menu";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useThemeMode } from "../context/ThemeContext";
 import lightLogo from "../assets/light-logo.png";
 import darkLogo from "../assets/dark-logo.png";
 import { NavButton } from "./NavButton";
 import { CustomAuthButton } from "./CustomAuthButton";
+import { useAppContext } from "../context/AppContext";
+import { signOut } from "firebase/auth";
+import { auth } from "../firebase";
 
-const Header = ({ active, setActive, user, handleLogout }) => {
+const Header = () => {
+  const { user, setUser, setActive, active } = useAppContext();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    signOut(auth).then(() => {
+      setUser(null);
+      setActive("login");
+      navigate("/auth");
+    });
+  };
   const userId = user?.uid;
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const { mode, toggleTheme } = useThemeMode();
-  console.log(user, "user");
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [drawerOpen, setDrawerOpen] = React.useState(false);
   const open = Boolean(anchorEl);
@@ -40,7 +52,6 @@ const Header = ({ active, setActive, user, handleLogout }) => {
   const handleMenuOpen = (e) => setAnchorEl(e.currentTarget);
   const handleMenuClose = () => setAnchorEl(null);
   const toggleDrawer = (open) => () => setDrawerOpen(open);
-
   const navItems = [
     { label: "Home", path: "/", key: "home" },
     { label: "Explore", path: "/explore", key: "explore" },

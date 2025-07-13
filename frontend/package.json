@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@apollo/client": "^3.13.8",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.11.16",
@@ -10,6 +11,7 @@
     "@pathofdev/react-tag-input": "^1.0.7",
     "@tanstack/react-query": "^5.81.5",
     "firebase": "^9.8.2",
+    "graphql": "^16.11.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.3.0",

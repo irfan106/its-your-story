@@ -23,7 +23,7 @@ const MostPopular = ({ blogs }) => {
           <div className="col-7 padding">
             <div className="text-start most-popular-font">{item.title}</div>
             <div className="text-start most-popular-font-meta">
-              {item.timestamp.toDate().toDateString()}
+              {new Date(item.timestamp).toDateString()}
             </div>
           </div>
         </div>

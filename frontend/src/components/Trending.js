@@ -139,7 +139,7 @@ const Trending = ({ blogs }) => {
                         : item.title}
                     </Typography>
                     <Typography variant="caption">
-                      {item.author} — {item.timestamp.toDate().toDateString()}
+                      {item.author} — {new Date(item.timestamp).toDateString()}
                     </Typography>
                   </Box>
                 </Link>

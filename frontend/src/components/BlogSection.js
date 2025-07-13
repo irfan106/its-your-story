@@ -58,7 +58,7 @@ const BlogSection = ({ blogs, user, handleDelete }) => {
 
               <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
                 <strong>{item.author}</strong> —{" "}
-                {item.timestamp.toDate().toDateString()}
+                {new Date(item.timestamp).toDateString()}
               </Typography>
 
               <Typography variant="body2" sx={{ mb: 2 }}>

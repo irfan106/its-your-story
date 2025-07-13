@@ -1,40 +1,31 @@
-import {
-  collection,
-  getDocs,
-  orderBy,
-  limit,
-  query,
-  where,
-} from "firebase/firestore";
-import { useQuery } from "@tanstack/react-query";
-import { db } from "../firebase";
+import { useQuery, gql } from "@apollo/client";
 
-export const useBlogs = ({ latestOnly = false } = {}) => {
-  return useQuery({
-    queryKey: ["blogs", latestOnly],
-    queryFn: async () => {
-      const blogsRef = collection(db, "blogs");
-      const blogQuery = query(
-        blogsRef,
-        orderBy("timestamp", "desc"),
-        ...(latestOnly ? [limit(5)] : [])
-      );
+const GET_BLOGS = gql`
+  query GetBlogs($limit: Int, $page: Int, $latestOnly: Boolean) {
+    blogs(limit: $limit, page: $page, latestOnly: $latestOnly) {
+      id
+      title
+      description
+      imgUrl
+      category
+      tags
+      author
+      userId
+      timestamp
+    }
+  }
+`;
 
-      const snapshot = await getDocs(blogQuery);
-      return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-    },
+export const useBlogs = ({ latestOnly = false, limit = 6, page = 1 } = {}) => {
+  const { data, loading, error } = useQuery(GET_BLOGS, {
+    variables: { latestOnly, limit, page },
+    fetchPolicy: "cache-and-network",
+    nextFetchPolicy: "cache-first",
   });
+
+  return {
+    data: data?.blogs || [],
+    isLoading: loading,
+    error,
+  };
 };
-
-export const useTrendingBlogs = () =>
-  useQuery({
-    queryKey: ["trendingBlogs"],
-    queryFn: async () => {
-      const trendQuery = query(
-        collection(db, "blogs"),
-        where("trending", "==", "yes")
-      );
-      const snapshot = await getDocs(trendQuery);
-      return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-    },
-  });

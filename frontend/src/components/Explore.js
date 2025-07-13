@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   Grid,
@@ -12,11 +12,18 @@ import {
 import { Link } from "react-router-dom";
 import { excerpt } from "../utility";
 import Spinner from "./Spinner";
-import { usePaginatedBlogsByPage } from "../hooks/usePaginatedBlogs";
+import { usePaginatedBlogs } from "../hooks/usePaginatedBlogs";
 
 const Explore = () => {
-  const { blogs, isLoading, fetchPage, currentPage, totalPages } =
-    usePaginatedBlogsByPage();
+  const [page, setPage] = useState(1);
+
+  const { blogs, isLoading, currentPage, totalPages, refetchPage } =
+    usePaginatedBlogs(page);
+
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
+    refetchPage(newPage);
+  };
 
   return (
     <Box sx={{ py: 4, px: 10 }}>
@@ -69,7 +76,7 @@ const Explore = () => {
               <Button
                 key={index}
                 variant={currentPage === index + 1 ? "contained" : "outlined"}
-                onClick={() => fetchPage(index + 1)}
+                onClick={() => handlePageChange(index + 1)}
                 sx={{ mx: 0.5 }}
               >
                 {index + 1}
