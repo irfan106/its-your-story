@@ -15,8 +15,6 @@ const GET_POPULAR = gql`
 export const usePopularBlogs = (limit = 5) => {
   const { data, loading, error } = useQuery(GET_POPULAR, {
     variables: { limit },
-    fetchPolicy: "cache-and-network",
-    nextFetchPolicy: "cache-first",
   });
 
   return {

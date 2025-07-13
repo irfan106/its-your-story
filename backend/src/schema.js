@@ -13,13 +13,16 @@ const typeDefs = gql`
     timestamp: String
     views: Int
   }
+
   type PaginatedBlogs {
     blogs: [Blog!]!
     currentPage: Int!
     totalPages: Int!
   }
+
   type Query {
     blogs(limit: Int, page: Int, latestOnly: Boolean): [Blog]
+    blog(id: ID!): Blog
     trendingBlogs(limit: Int): [Blog]
     mostPopularBlogs(limit: Int): [Blog]
     blogTags: [String]

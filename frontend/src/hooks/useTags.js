@@ -7,10 +7,7 @@ const GET_TAGS = gql`
 `;
 
 export const useTags = () => {
-  const { data, loading, error } = useQuery(GET_TAGS, {
-    fetchPolicy: "cache-and-network",
-    nextFetchPolicy: "cache-first",
-  });
+  const { data, loading, error } = useQuery(GET_TAGS, {});
 
   return {
     tags: data?.blogTags || [],

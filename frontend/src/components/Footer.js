@@ -5,8 +5,11 @@ import {
   Grid,
   Typography,
   Link,
+  Stack,
   useTheme,
 } from "@mui/material";
+import EmailIcon from "@mui/icons-material/Email";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
 
 export default function Footer() {
   const theme = useTheme();
@@ -16,74 +19,100 @@ export default function Footer() {
     <Box
       component="footer"
       sx={{
-        mt: 6,
-        py: 6,
+        mt: 10,
+        pt: 6,
+        pb: 4,
         px: 2,
-        backgroundColor: isDark ? "#0f172a" : "#f9fafb",
-        color: isDark ? "#f1f5f9" : "#1f2937",
-        borderTop: `1px solid ${isDark ? "#1e293b" : theme.palette.divider}`,
+        background: isDark
+          ? "linear-gradient(135deg, #0e0e0e, #1a1a1a)"
+          : "linear-gradient(135deg, #fafafa, #e5e5e5)",
+        color: isDark ? "#e0e0e0" : "#1a1a1a",
+        borderTop: `1px solid ${isDark ? "#2a2a2a" : "#d4d4d4"}`,
       }}
     >
       <Container maxWidth="lg">
         <Grid container spacing={6}>
+          {/* Section: Brand Description */}
           <Grid item xs={12} md={4}>
-            <Typography variant="h6" gutterBottom fontWeight="bold">
+            <Typography variant="h5" fontWeight="bold" gutterBottom>
               Tell Your Story
             </Typography>
             <Typography
               variant="body2"
-              sx={{ color: isDark ? "#94a3b8" : "#4b5563" }}
+              sx={{
+                color: isDark ? "#a3a3a3" : "#4b4b4b",
+                lineHeight: 1.7,
+              }}
             >
-              It's your story, so tell everyone! Share your ideas, thoughts, and
-              experiences with the world.
+              Everyone has a voice. Share your unique ideas, thoughts, and
+              experiences with the world through storytelling.
             </Typography>
           </Grid>
 
+          {/* Section: Quick Links */}
           <Grid item xs={12} md={4}>
-            <Typography variant="h6" gutterBottom fontWeight="bold">
+            <Typography variant="h6" fontWeight="bold" gutterBottom>
               Quick Links
             </Typography>
-            <Box>
+            <Stack spacing={1}>
               {["Home", "Explore", "About", "Contact"].map((text) => (
                 <Link
                   key={text}
                   href={`/${text.toLowerCase()}`}
-                  underline="hover"
-                  color={isDark ? "#cbd5e1" : "inherit"}
-                  display="block"
+                  underline="none"
                   sx={{
-                    my: 0.5,
-                    transition: "color 0.3s",
+                    fontSize: "0.95rem",
+                    color: isDark ? "#d4d4d4" : "#2a2a2a",
+                    transition: "all 0.3s ease",
                     "&:hover": {
-                      color: theme.palette.primary.main,
+                      color: isDark ? "#ffffff" : "#000000",
+                      pl: 0.5,
                     },
                   }}
                 >
                   {text}
                 </Link>
               ))}
-            </Box>
+            </Stack>
           </Grid>
 
+          {/* Section: Contact Info */}
           <Grid item xs={12} md={4}>
-            <Typography variant="h6" gutterBottom fontWeight="bold">
-              Connect
+            <Typography variant="h6" fontWeight="bold" gutterBottom>
+              Connect With Us
             </Typography>
-            <Typography
-              variant="body2"
-              sx={{ color: isDark ? "#94a3b8" : "#4b5563" }}
-            >
-              Email: info@yourstory.com
-              <br />
-              Location: Worldwide 🌍
-            </Typography>
+            <Stack spacing={1}>
+              <Box display="flex" alignItems="center" gap={1}>
+                <EmailIcon
+                  sx={{ fontSize: 20, color: isDark ? "#9ca3af" : "#525252" }}
+                />
+                <Typography
+                  variant="body2"
+                  sx={{ color: isDark ? "#a3a3a3" : "#4b4b4b" }}
+                >
+                  info@yourstory.com
+                </Typography>
+              </Box>
+              <Box display="flex" alignItems="center" gap={1}>
+                <LocationOnIcon
+                  sx={{ fontSize: 20, color: isDark ? "#9ca3af" : "#525252" }}
+                />
+                <Typography
+                  variant="body2"
+                  sx={{ color: isDark ? "#a3a3a3" : "#4b4b4b" }}
+                >
+                  Worldwide 🌍
+                </Typography>
+              </Box>
+            </Stack>
           </Grid>
         </Grid>
 
-        <Box mt={5} textAlign="center">
+        {/* Footer Bottom */}
+        <Box mt={6} textAlign="center">
           <Typography
-            variant="body2"
-            sx={{ color: isDark ? "#64748b" : "#6b7280" }}
+            variant="caption"
+            sx={{ color: isDark ? "#7d7d7d" : "#6b6b6b" }}
           >
             © {new Date().getFullYear()} Tell Your Story. All rights reserved.
           </Typography>

@@ -79,10 +79,20 @@ const Header = () => {
 
   return (
     <AppBar
-      position="static"
-      color="default"
-      elevation={2}
-      sx={{ mb: 3, backgroundColor: theme.palette.background.paper }}
+      position="sticky"
+      elevation={4}
+      sx={{
+        mb: 3,
+        backdropFilter: "blur(12px)",
+        backgroundColor:
+          theme.palette.mode === "dark"
+            ? "rgba(18,18,18,0.8)"
+            : "rgba(255,255,255,0.6)",
+        borderBottom: `1px solid ${
+          theme.palette.mode === "dark" ? "#333" : "#ddd"
+        }`,
+        transition: "all 0.3s ease",
+      }}
     >
       <Toolbar sx={{ justifyContent: "space-between" }}>
         <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
@@ -98,7 +108,17 @@ const Header = () => {
             <img
               src={mode === "dark" ? darkLogo : lightLogo}
               alt="Logo"
-              style={{ width: 130, height: 70 }}
+              style={{
+                width: 130,
+                height: 70,
+                objectFit: "contain",
+                transition: "transform 0.3s ease",
+                cursor: "pointer",
+              }}
+              onMouseOver={(e) =>
+                (e.currentTarget.style.transform = "scale(1.05)")
+              }
+              onMouseOut={(e) => (e.currentTarget.style.transform = "scale(1)")}
             />
           </Box>
           {!isMobile && (
@@ -114,11 +134,13 @@ const Header = () => {
               mode === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"
             }
           >
-            <IconButton onClick={toggleTheme} color="inherit">
+            <IconButton onClick={toggleTheme}>
               {mode === "dark" ? (
-                <LightModeOutlinedIcon />
+                <LightModeOutlinedIcon
+                  sx={{ color: theme.palette.warning.main }}
+                />
               ) : (
-                <DarkModeOutlinedIcon />
+                <DarkModeOutlinedIcon sx={{ color: theme.palette.grey[800] }} />
               )}
             </IconButton>
           </Tooltip>
@@ -148,7 +170,18 @@ const Header = () => {
                       "https://cdn-icons-png.flaticon.com/512/149/149071.png"
                     }
                     alt={user.displayName || "Profile"}
-                    sx={{ width: 36, height: 36 }}
+                    sx={{
+                      width: 36,
+                      height: 36,
+                      transition: "all 0.3s ease",
+                      boxShadow:
+                        theme.palette.mode === "dark"
+                          ? "0 0 0 2px #444"
+                          : "0 0 0 2px #ccc",
+                      "&:hover": {
+                        boxShadow: `0 0 0 3px ${theme.palette.primary.main}`,
+                      },
+                    }}
                   />
                 </Tooltip>
                 <Typography
@@ -156,8 +189,10 @@ const Header = () => {
                   noWrap
                   sx={{
                     maxWidth: 120,
-                    fontWeight: 500,
+                    fontWeight: 600,
+                    fontSize: "0.95rem",
                     color: "text.primary",
+                    letterSpacing: 0.2,
                   }}
                 >
                   {user.displayName}
@@ -203,8 +238,17 @@ const Header = () => {
         anchor="right"
         open={drawerOpen}
         onClose={toggleDrawer(false)}
-        ModalProps={{
-          keepMounted: true, // Better open performance on mobile
+        PaperProps={{
+          sx: {
+            width: 270,
+            background:
+              theme.palette.mode === "dark"
+                ? "linear-gradient(135deg, #121212, #1f1f1f)"
+                : "linear-gradient(135deg, #fdfdfd, #f3f3f3)",
+            borderLeft: `1px solid ${
+              theme.palette.mode === "dark" ? "#333" : "#ddd"
+            }`,
+          },
         }}
       >
         <Box

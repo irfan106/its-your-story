@@ -15,8 +15,6 @@ const GET_TRENDING = gql`
 export const useTrendingBlogs = (limit = 10) => {
   const { data, loading, error } = useQuery(GET_TRENDING, {
     variables: { limit },
-    fetchPolicy: "cache-and-network",
-    nextFetchPolicy: "cache-first",
   });
 
   return {

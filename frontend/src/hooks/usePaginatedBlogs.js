@@ -20,8 +20,6 @@ const GET_BLOGS_BY_PAGE = gql`
 export const usePaginatedBlogs = (page = 1, pageSize = 6) => {
   const { data, loading, error, refetch } = useQuery(GET_BLOGS_BY_PAGE, {
     variables: { page, pageSize },
-    fetchPolicy: "cache-and-network",
-    nextFetchPolicy: "cache-first",
   });
 
   return {

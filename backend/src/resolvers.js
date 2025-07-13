@@ -85,6 +85,18 @@ const resolvers = {
         totalPages: Math.ceil(total / pageSize),
       };
     },
+    blog: async (_, { id }) => {
+      const docRef = db.collection("blogs").doc(id);
+      const doc = await docRef.get();
+      if (!doc.exists) return null;
+
+      const data = doc.data();
+      return {
+        id: doc.id,
+        ...data,
+        timestamp: data.timestamp?.toDate?.().toISOString() || null,
+      };
+    },
   },
 };
 

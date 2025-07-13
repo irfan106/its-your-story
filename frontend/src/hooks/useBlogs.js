@@ -19,8 +19,6 @@ const GET_BLOGS = gql`
 export const useBlogs = ({ latestOnly = false, limit = 6, page = 1 } = {}) => {
   const { data, loading, error } = useQuery(GET_BLOGS, {
     variables: { latestOnly, limit, page },
-    fetchPolicy: "cache-and-network",
-    nextFetchPolicy: "cache-first",
   });
 
   return {

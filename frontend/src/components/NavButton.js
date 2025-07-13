@@ -16,11 +16,12 @@ export const NavButton = styled(Button)(({ theme, active }) => {
     overflow: "hidden",
     padding: "6px 12px",
     transition: "color 0.2s ease",
-
     "&:hover": {
       backgroundColor: "transparent",
       color: primaryColor,
+      transform: "translateY(-1px)",
     },
+    transition: "color 0.2s ease, transform 0.2s ease",
 
     "&::after": {
       content: '""',

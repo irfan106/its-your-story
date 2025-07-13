@@ -3,22 +3,33 @@ import {
   Box,
   Grid,
   Typography,
-  Button,
-  IconButton,
   Card,
   CardMedia,
   CardContent,
-  CardActions,
+  useTheme,
+  Link as MuiLink,
 } from "@mui/material";
-import { Delete, Edit } from "@mui/icons-material";
 import { Link } from "react-router-dom";
 import { excerpt } from "../utility";
 
-const BlogSection = ({ blogs, user, handleDelete }) => {
-  const userId = user?.uid;
+const BlogSection = ({ blogs }) => {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
+
   return (
-    <Box>
-      <Typography variant="h4" sx={{ mb: 4, mt: 2 }}>
+    <Box sx={{ mt: 4 }}>
+      <Typography
+        variant="h4"
+        sx={{
+          mb: 4,
+          fontWeight: 700,
+          background: isDark
+            ? "linear-gradient(to right, #f4f4f5, #e5e7eb)"
+            : "linear-gradient(to right, #1f2937, #4b5563)",
+          WebkitBackgroundClip: "text",
+          WebkitTextFillColor: "transparent",
+        }}
+      >
         Exciting Stories
       </Typography>
 
@@ -26,87 +37,133 @@ const BlogSection = ({ blogs, user, handleDelete }) => {
         <Card
           key={item.id}
           sx={{
-            display: "flex",
             mb: 4,
+            borderRadius: 5,
+            display: "flex",
             flexDirection: { xs: "column", md: "row" },
+            overflow: "hidden",
+            backgroundColor: isDark
+              ? "rgba(255, 255, 255, 0.05)"
+              : "rgba(255, 255, 255, 0.25)",
+            backdropFilter: "blur(20px)",
+            WebkitBackdropFilter: "blur(20px)",
+            border: isDark
+              ? "1px solid rgba(255, 255, 255, 0.1)"
+              : "1px solid rgba(0, 0, 0, 0.05)",
+            boxShadow: isDark
+              ? "0 0 30px rgba(255, 255, 255, 0.05)"
+              : "0 10px 30px rgba(0, 0, 0, 0.1)",
+            transition: "transform 0.3s ease, box-shadow 0.3s ease",
+            "&:hover": {
+              transform: "scale(1.015)",
+              boxShadow: isDark
+                ? "0 0 40px rgba(255, 255, 255, 0.1)"
+                : "0 15px 35px rgba(0, 0, 0, 0.15)",
+            },
           }}
         >
-          <CardMedia
-            component="img"
-            image={item.imgUrl}
-            alt={item.title}
+          <Box
             sx={{
+              flexShrink: 0,
               width: { xs: "100%", md: 300 },
-              height: 200,
-              objectFit: "cover",
+              height: { xs: 220, md: 280 },
+              overflow: "hidden",
             }}
-          />
+          >
+            <CardMedia
+              component="img"
+              image={item.imgUrl}
+              alt={item.title}
+              sx={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                objectPosition: "center",
+              }}
+            />
+          </Box>
 
-          <Box sx={{ display: "flex", flexDirection: "column", flex: 1 }}>
-            <CardContent>
+          <Box sx={{ flex: 1, p: 3 }}>
+            <CardContent sx={{ p: 0 }}>
               <Typography
-                variant="subtitle2"
-                color="text.secondary"
-                gutterBottom
+                variant="overline"
+                color={isDark ? "grey.400" : "text.secondary"}
               >
                 {item.category}
               </Typography>
 
-              <Typography variant="h6" sx={{ mb: 1 }}>
+              <Typography variant="h6" sx={{ mb: 1, mt: 1 }}>
                 {item.title}
               </Typography>
 
-              <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
                 <strong>{item.author}</strong> —{" "}
-                {new Date(item.timestamp).toDateString()}
+                {new Date(item.timestamp).toLocaleDateString(undefined, {
+                  month: "short",
+                  day: "numeric",
+                  year: "numeric",
+                })}
               </Typography>
 
               <Typography variant="body2" sx={{ mb: 2 }}>
-                {excerpt(item.description, 120)}
+                {excerpt(item.description, 110)}{" "}
+                <MuiLink
+                  component={Link}
+                  to={`/detail/${item.id}`}
+                  underline="hover"
+                  sx={{
+                    fontWeight: 500,
+                    fontSize: "0.9rem",
+                    color: isDark ? "#90caf9" : "#1e40af",
+                    ml: 0.5,
+                    "&:hover": {
+                      textDecoration: "underline",
+                      color: isDark ? "#c3dcfa" : "#2563eb",
+                    },
+                  }}
+                >
+                  Read more
+                </MuiLink>
               </Typography>
-
-              <Button
-                component={Link}
-                to={`/detail/${item.id}`}
-                variant="contained"
-                color="primary"
-              >
-                Read More
-              </Button>
-
-              {userId && item.userId === userId && (
-                <Box sx={{ float: "right" }}>
-                  <IconButton
-                    onClick={() => handleDelete(item.id)}
-                    aria-label="delete"
-                    color="error"
-                  >
-                    <Delete />
-                  </IconButton>
-                  <IconButton
-                    component={Link}
-                    to={`/update/${item.id}`}
-                    aria-label="edit"
-                    color="primary"
-                  >
-                    <Edit />
-                  </IconButton>
-                </Box>
-              )}
             </CardContent>
           </Box>
         </Card>
       ))}
+
       <Grid item xs={12}>
-        <Box sx={{ textAlign: "center", mt: 2 }}>
-          <Button
-            variant="outlined"
-            color="primary"
+        <Box sx={{ textAlign: "center", mt: 5 }}>
+          <MuiLink
             component={Link}
             to="/explore"
+            sx={{
+              fontWeight: 600,
+              fontSize: "1rem",
+              px: 4,
+              py: 1.2,
+              borderRadius: 3,
+              textTransform: "none",
+              backdropFilter: "blur(8px)",
+              WebkitBackdropFilter: "blur(8px)",
+              color: isDark ? "#fff" : "#111827",
+              backgroundColor: isDark
+                ? "rgba(255, 255, 255, 0.05)"
+                : "rgba(255, 255, 255, 0.4)",
+              border: isDark
+                ? "1px solid rgba(255, 255, 255, 0.1)"
+                : "1px solid rgba(0, 0, 0, 0.1)",
+              "&:hover": {
+                backgroundColor: isDark
+                  ? "rgba(255, 255, 255, 0.1)"
+                  : "rgba(255, 255, 255, 0.65)",
+                textDecoration: "none",
+                boxShadow: isDark
+                  ? "0 0 10px rgba(255, 255, 255, 0.08)"
+                  : "0 6px 16px rgba(0, 0, 0, 0.12)",
+              },
+            }}
           >
             View More Stories
-          </Button>
+          </MuiLink>
         </Box>
       </Grid>
     </Box>

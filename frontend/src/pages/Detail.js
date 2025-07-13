@@ -1,71 +1,164 @@
-import { collection, doc, getDoc, getDocs } from "firebase/firestore";
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { useAppContext } from "../context/AppContext";
+import { useQuery, gql } from "@apollo/client";
 import MostPopular from "../components/MostPopular";
 import Tags from "../components/Tags";
-import { db } from "../firebase";
+import { Box, Typography, useTheme } from "@mui/material";
 
-const Detail = ({ setActive }) => {
+// GraphQL queries
+const GET_BLOG_DETAIL = gql`
+  query GetBlogDetail($id: ID!) {
+    blog(id: $id) {
+      id
+      title
+      description
+      imgUrl
+      author
+      timestamp
+    }
+  }
+`;
+
+const GET_SIDEBAR_DATA = gql`
+  query GetSidebarData($limit: Int) {
+    mostPopularBlogs(limit: $limit) {
+      id
+      title
+      imgUrl
+      timestamp
+    }
+    blogTags
+  }
+`;
+
+const Detail = () => {
   const { id } = useParams();
-  const [blog, setBlog] = useState(null);
-  const [blogs, setBlogs] = useState([]);
-  const [tags, setTags] = useState([]);
+  const { setActive } = useAppContext();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
+
+  const {
+    data: blogData,
+    loading: blogLoading,
+    error: blogError,
+  } = useQuery(GET_BLOG_DETAIL, { variables: { id }, skip: !id });
+
+  const {
+    data: sidebarData,
+    loading: sidebarLoading,
+    error: sidebarError,
+  } = useQuery(GET_SIDEBAR_DATA, {
+    variables: { limit: 5 },
+  });
+
+  const blog = blogData?.blog;
+  const tags = sidebarData?.blogTags || [];
+  const blogs = sidebarData?.mostPopularBlogs || [];
 
   useEffect(() => {
-    const getBlogsData = async () => {
-      const blogRef = collection(db, "blogs");
-      const blogs = await getDocs(blogRef);
-      setBlogs(blogs.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
-      let tags = [];
-      blogs.docs.map((doc) => tags.push(...doc.get("tags")));
-      let uniqueTags = [...new Set(tags)];
-      setTags(uniqueTags);
-    };
+    if (blog) setActive(null);
+  }, [blog]);
 
-    getBlogsData();
-  }, []);
+  if (blogLoading || sidebarLoading) {
+    return (
+      <Typography align="center" sx={{ mt: 10 }}>
+        Loading...
+      </Typography>
+    );
+  }
 
-  useEffect(() => {
-    id && getBlogDetail();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
+  if (blogError || sidebarError) {
+    return (
+      <Typography color="error" align="center" sx={{ mt: 10 }}>
+        Something went wrong. Please try again later.
+      </Typography>
+    );
+  }
 
-  const getBlogDetail = async () => {
-    const docRef = doc(db, "blogs", id);
-    const blogDetail = await getDoc(docRef);
-    setBlog(blogDetail.data());
-    setActive(null);
-  };
   return (
-    <div className="single">
-      <div
-        className="blog-title-box"
-        style={{ backgroundImage: `url('${blog?.imgUrl}')` }}
+    <Box sx={{ pt: 8, pb: 6, px: { xs: 2, md: 10 } }}>
+      <Box
+        sx={{
+          position: "relative",
+          borderRadius: 4,
+          overflow: "hidden",
+          mb: 6,
+          backgroundImage: `url('${blog?.imgUrl}')`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          height: 320,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          "&::before": {
+            content: '""',
+            position: "absolute",
+            inset: 0,
+            background: "rgba(0,0,0,0.5)",
+            backdropFilter: "blur(6px)",
+          },
+        }}
       >
-        <div className="overlay"></div>
-        <div className="blog-title">
-          <span>{blog?.timestamp.toDate().toDateString()}</span>
-          <h2>{blog?.title}</h2>
-        </div>
-      </div>
-      <div className="container-fluid pb-4 pt-4 padding blog-single-content">
-        <div className="container padding">
-          <div className="row mx-0">
-            <div className="col-md-8">
-              <span className="meta-info text-start">
-                By <p className="author">{blog?.author}</p> -&nbsp;
-                {blog?.timestamp.toDate().toDateString()}
-              </span>
-              <p className="text-start">{blog?.description}</p>
-            </div>
-            <div className="col-md-3">
-              <Tags tags={tags} />
-              <MostPopular blogs={blogs} />
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+        <Box
+          sx={{
+            position: "relative",
+            zIndex: 1,
+            textAlign: "center",
+            color: "#fff",
+          }}
+        >
+          <Typography variant="h4" fontWeight={700}>
+            {blog?.title}
+          </Typography>
+          <Typography variant="subtitle2" sx={{ mt: 1 }}>
+            {new Date(blog?.timestamp).toDateString()}
+          </Typography>
+        </Box>
+      </Box>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: { xs: "column", md: "row" },
+          gap: 4,
+        }}
+      >
+        <Box
+          sx={{
+            flex: 3,
+            backgroundColor: isDark
+              ? "rgba(255,255,255,0.05)"
+              : "rgba(255,255,255,0.4)",
+            borderRadius: 5,
+            backdropFilter: "blur(18px)",
+            WebkitBackdropFilter: "blur(18px)",
+            border: isDark
+              ? "1px solid rgba(255,255,255,0.08)"
+              : "1px solid rgba(0,0,0,0.08)",
+            boxShadow: isDark
+              ? "0 4px 20px rgba(255,255,255,0.04)"
+              : "0 8px 30px rgba(0,0,0,0.1)",
+            padding: 4,
+          }}
+        >
+          <Typography variant="subtitle1" color="text.secondary" mb={2}>
+            By <strong>{blog?.author}</strong> –{" "}
+            {new Date(blog?.timestamp).toDateString()}
+          </Typography>
+          <Typography variant="body1" sx={{ whiteSpace: "pre-line" }}>
+            {blog?.description}
+          </Typography>
+        </Box>
+
+        {/* Sidebar */}
+        <Box sx={{ flex: 1 }}>
+          <Tags tags={tags} />
+          <Box mt={4}>
+            <MostPopular blogs={blogs} />
+          </Box>
+        </Box>
+      </Box>
+    </Box>
   );
 };
 

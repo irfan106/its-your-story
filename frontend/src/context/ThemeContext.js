@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useMemo, useState } from "react";
+import React, {
+  createContext,
+  useContext,
+  useMemo,
+  useState,
+  useEffect,
+} from "react";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 
@@ -7,11 +13,24 @@ const ThemeContext = createContext();
 export const useThemeMode = () => useContext(ThemeContext);
 
 export const ThemeContextProvider = ({ children }) => {
-  const [mode, setMode] = useState("light");
+  // Check for saved theme, default to "dark"
+  const [mode, setMode] = useState(() => {
+    const saved = localStorage.getItem("themeMode");
+    return saved === "light" || saved === "dark" ? saved : "dark";
+  });
 
   const toggleTheme = () => {
-    setMode((prev) => (prev === "light" ? "dark" : "light"));
+    setMode((prev) => {
+      const next = prev === "light" ? "dark" : "light";
+      localStorage.setItem("themeMode", next); // Save to localStorage
+      return next;
+    });
   };
+
+  // Update localStorage whenever mode changes
+  useEffect(() => {
+    localStorage.setItem("themeMode", mode);
+  }, [mode]);
 
   const theme = useMemo(() => {
     const palette =
