@@ -1,0 +1,72 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# ---------------------
+# Frontend dependencies
+# ---------------------
+/frontend/node_modules
+/frontend/.cache
+
+# Backend dependencies
+backend/node_modules
+backend/its-your-story-firebase-adminsdk.json
+
+# ---------------------
+# Firebase secrets & configs
+# ---------------------
+firebase-debug.log
+firebase-debug.*
+.firebase/*
+firebase.json
+.firebaserc
+*.secret.*
+**/serviceAccountKey.json
+**/firebase-adminsdk*.json
+its-your-story-firebase-adminsdk.json
+
+# ---------------------
+# Build & output
+# ---------------------
+/build
+/dist
+/.next
+/.output
+
+# ---------------------
+# Testing
+# ---------------------
+/coverage
+/jest.cache
+/test-results
+
+# ---------------------
+# Environment files
+# ---------------------
+.env
+.env.local
+.env.*.local
+.env.development.local
+.env.production.local
+.env.test.local
+.env.staging.local
+
+# ---------------------
+# Misc
+# ---------------------
+.DS_Store
+.pnp
+.pnp.js
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ---------------------
+# Editor configs
+# ---------------------
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# -------------------
