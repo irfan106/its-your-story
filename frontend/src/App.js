@@ -4,34 +4,35 @@ import "./media-query.css";
 import { Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Detail from "./pages/Detail";
-import AddEditBlog from "./pages/AddEditBlog";
-import About from "./pages/About";
-import NotFound from "./pages/NotFound";
-import Header from "./components/Header";
-import Auth from "./pages/Auth";
-import Footer from "./components/Footer";
-import Explore from "./components/Explore";
-import MyStories from "./components/MyStories";
-import Contact from "./components/Contact";
 import HomePage from "./pages/HomePage";
+import BlogDetails from "./pages/BlogDetails";
+import Navbar from "./components/Navbar";
+import CreateBlog from "./pages/CreateBlog";
+import EditBlog from "./pages/EditBlog";
+import AuthPage from "./pages/AuthPage";
+import ExplorePage from "./pages/ExplorePage";
+import MyStoriesPage from "./pages/MyStoriesPage";
+import ContactPage from "./pages/ContactPage";
+import NotFoundPage from "./pages/NotFoundPage";
+import Footer from "./components/Footer";
+import AboutPage from "./pages/AboutPage";
 
 function App() {
   return (
     <>
       <ToastContainer key="toast-container" position="top-center" />
-      <Header />
+      <Navbar />
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/detail/:id" element={<Detail />} />
-        <Route path="/create" element={<AddEditBlog />} />
-        <Route path="/update/:id" element={<AddEditBlog />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/auth" element={<Auth />} />
-        <Route path="/explore" element={<Explore />} />
-        <Route path="/my-stories" element={<MyStories />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="*" element={<NotFound />} />
+        <Route path="/detail/:id" element={<BlogDetails />} />
+        <Route path="/create" element={<CreateBlog />} />
+        <Route path="/edit/:id" element={<EditBlog />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/auth" element={<AuthPage />} />
+        <Route path="/explore" element={<ExplorePage />} />
+        <Route path="/my-stories" element={<MyStoriesPage />} />
+        <Route path="/contact" element={<ContactPage />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
       <Footer />
     </>

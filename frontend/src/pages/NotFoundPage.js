@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Container, Typography } from "@mui/material";
 
-const NotFound = () => {
+const NotFoundPage = () => {
   return (
     <Container maxWidth="md" sx={{ textAlign: "center", mt: 10 }}>
       <Box>
@@ -21,4 +21,4 @@ const NotFound = () => {
   );
 };
 
-export default NotFound;
+export default NotFoundPage;

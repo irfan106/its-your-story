@@ -9,7 +9,7 @@ import {
   useTheme,
 } from "@mui/material";
 
-const About = () => {
+const AboutPage = () => {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
 
@@ -137,4 +137,4 @@ const About = () => {
   );
 };
 
-export default About;
+export default AboutPage;

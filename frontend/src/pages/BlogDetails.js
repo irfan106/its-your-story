@@ -33,7 +33,7 @@ const GET_SIDEBAR_DATA = gql`
   }
 `;
 
-const Detail = () => {
+const BlogDetails = () => {
   const { id } = useParams();
   const { setActive } = useAppContext();
   const theme = useTheme();
@@ -168,4 +168,4 @@ const Detail = () => {
   );
 };
 
-export default Detail;
+export default BlogDetails;

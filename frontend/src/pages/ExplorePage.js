@@ -12,10 +12,10 @@ import {
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import { excerpt } from "../utility";
-import Spinner from "./Spinner";
+import Spinner from "../components/Spinner";
 import { usePaginatedBlogs } from "../hooks/usePaginatedBlogs";
 
-const Explore = () => {
+const ExplorePage = () => {
   const [page, setPage] = useState(1);
   const { blogs, isLoading, currentPage, totalPages, refetchPage } =
     usePaginatedBlogs(page);
@@ -179,4 +179,4 @@ const Explore = () => {
   );
 };
 
-export default Explore;
+export default ExplorePage;

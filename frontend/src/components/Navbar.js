@@ -3,7 +3,6 @@ import {
   AppBar,
   Toolbar,
   Typography,
-  Button,
   Box,
   Avatar,
   IconButton,
@@ -30,7 +29,7 @@ import { useAppContext } from "../context/AppContext";
 import { signOut } from "firebase/auth";
 import { auth } from "../firebase";
 
-const Header = () => {
+const Navbar = () => {
   const { user, setUser, setActive, active } = useAppContext();
   const navigate = useNavigate();
 
@@ -327,4 +326,4 @@ const Header = () => {
   );
 };
 
-export default Header;
+export default Navbar;

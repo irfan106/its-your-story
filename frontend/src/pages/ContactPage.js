@@ -15,7 +15,7 @@ import EmailIcon from "@mui/icons-material/Email";
 const MotionPaper = motion(Paper);
 const MotionBox = motion(Box);
 
-const Contact = () => {
+const ContactPage = () => {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
   const [loading, setLoading] = useState(false);
@@ -219,4 +219,4 @@ const Contact = () => {
   );
 };
 
-export default Contact;
+export default ContactPage;

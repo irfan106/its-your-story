@@ -32,7 +32,7 @@ const initialState = {
   confirmPassword: "",
 };
 
-const Auth = () => {
+const AuthPage = () => {
   const [state, setState] = useState(initialState);
   const [signUp, setSignUp] = useState(false);
   const [snackbar, setSnackbar] = useState({
@@ -276,4 +276,4 @@ const Auth = () => {
   );
 };
 
-export default Auth;
+export default AuthPage;
