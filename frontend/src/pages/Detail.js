@@ -4,7 +4,8 @@ import { useAppContext } from "../context/AppContext";
 import { useQuery, gql } from "@apollo/client";
 import MostPopular from "../components/MostPopular";
 import Tags from "../components/Tags";
-import { Box, Typography, useTheme } from "@mui/material";
+import { Box, Stack, Typography, useTheme } from "@mui/material";
+import Spinner from "../components/Spinner";
 
 // GraphQL queries
 const GET_BLOG_DETAIL = gql`
@@ -62,9 +63,14 @@ const Detail = () => {
 
   if (blogLoading || sidebarLoading) {
     return (
-      <Typography align="center" sx={{ mt: 10 }}>
-        Loading...
-      </Typography>
+      <Stack
+        alignItems="center"
+        justifyContent="center"
+        height="40vh"
+        sx={{ mt: 4 }}
+      >
+        <Spinner />
+      </Stack>
     );
   }
 

@@ -46,7 +46,12 @@ const Explore = () => {
       </Typography>
 
       {isLoading ? (
-        <Stack alignItems="center" justifyContent="center" sx={{ mt: 4 }}>
+        <Stack
+          alignItems="center"
+          justifyContent="center"
+          height="40vh"
+          sx={{ mt: 4 }}
+        >
           <Spinner />
         </Stack>
       ) : (

@@ -5,12 +5,31 @@ require("dotenv").config();
 
 const typeDefs = require("./src/schema");
 const resolvers = require("./src/resolvers");
+const { auth } = require("./src/firebase"); // Import Firebase Auth
 
 async function startServer() {
   const app = express();
   app.use(cors());
 
-  const server = new ApolloServer({ typeDefs, resolvers });
+  const server = new ApolloServer({
+    typeDefs,
+    resolvers,
+    context: async ({ req }) => {
+      const token = req.headers.authorization?.split("Bearer ")[1];
+      console.log("Received token:", token); // ✅ Should now log token
+
+      if (!token) return { user: null };
+
+      try {
+        const decodedToken = await auth.verifyIdToken(token);
+        console.log("Decoded user:", decodedToken); // ✅ Log user
+        return { user: decodedToken };
+      } catch (error) {
+        console.error("Error verifying token:", error);
+        return { user: null };
+      }
+    },
+  });
 
   await server.start();
   server.applyMiddleware({ app });

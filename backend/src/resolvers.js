@@ -97,6 +97,43 @@ const resolvers = {
         timestamp: data.timestamp?.toDate?.().toISOString() || null,
       };
     },
+
+    myBlogsByPage: async (_, { page = 1, pageSize = 6 }, { user }) => {
+      if (!user) throw new Error("Not authenticated");
+
+      const offset = (page - 1) * pageSize;
+
+      const queryRef = db
+        .collection("blogs")
+        .where("userId", "==", user.uid)
+        .orderBy("timestamp", "desc")
+        .offset(offset)
+        .limit(pageSize);
+
+      const snapshot = await queryRef.get();
+
+      const blogs = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+        timestamp: doc.data().timestamp?.toDate?.().toISOString?.() || null,
+      }));
+
+      // Get total count
+      const countSnap = await db
+        .collection("blogs")
+        .where("userId", "==", user.uid)
+        .count()
+        .get();
+
+      const total = countSnap.data().count;
+      const totalPages = Math.ceil(total / pageSize);
+
+      return {
+        blogs,
+        currentPage: page,
+        totalPages,
+      };
+    },
   },
 };
 

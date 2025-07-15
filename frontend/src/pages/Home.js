@@ -52,7 +52,7 @@ const Home = () => {
         style={{
           justifyContent: "center",
           alignItems: "center",
-          height: "auto",
+          height: "50vh",
         }}
       >
         <Spinner />

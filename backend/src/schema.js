@@ -27,6 +27,7 @@ const typeDefs = gql`
     mostPopularBlogs(limit: Int): [Blog]
     blogTags: [String]
     blogsByPage(page: Int, pageSize: Int): PaginatedBlogs!
+    myBlogsByPage(page: Int, pageSize: Int): PaginatedBlogs!
   }
 `;
 
