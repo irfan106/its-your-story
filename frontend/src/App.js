@@ -1,7 +1,6 @@
 import "./App.css";
 import "./style.scss";
 import "./media-query.css";
-import Home from "./pages/Home";
 import { Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -15,6 +14,7 @@ import Footer from "./components/Footer";
 import Explore from "./components/Explore";
 import MyStories from "./components/MyStories";
 import Contact from "./components/Contact";
+import HomePage from "./pages/HomePage";
 
 function App() {
   return (
@@ -22,7 +22,7 @@ function App() {
       <ToastContainer key="toast-container" position="top-center" />
       <Header />
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<HomePage />} />
         <Route path="/detail/:id" element={<Detail />} />
         <Route path="/create" element={<AddEditBlog />} />
         <Route path="/update/:id" element={<AddEditBlog />} />

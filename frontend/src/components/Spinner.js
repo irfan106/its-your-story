@@ -1,10 +1,29 @@
 import React from "react";
+import { CircularProgress, Box, useTheme } from "@mui/material";
 
 const Spinner = () => {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
+
   return (
-    <div className="spinner-border text-primary mt-5 spinner" role="status">
-      <span className="visually-hidden">Loading...</span>
-    </div>
+    <Box
+      sx={{
+        height: "100vh",
+        width: "100%",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        backdropFilter: "blur(8px)",
+      }}
+    >
+      <CircularProgress
+        size={60}
+        thickness={4}
+        sx={{
+          color: isDark ? "#90caf9" : "#1976d2",
+        }}
+      />
+    </Box>
   );
 };
 

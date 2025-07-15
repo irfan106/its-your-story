@@ -14,7 +14,7 @@ import { usePopularBlogs } from "../hooks/usePopularBlogs";
 import { useTags } from "../hooks/useTags";
 import { useAppContext } from "../context/AppContext";
 
-const Home = () => {
+const HomePage = () => {
   const { setActive, user } = useAppContext();
 
   const { data: blogs = [], isLoading: loadingBlogs } = useBlogs({
@@ -86,4 +86,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default HomePage;

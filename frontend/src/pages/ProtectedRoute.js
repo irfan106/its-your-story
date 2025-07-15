@@ -1,5 +1,5 @@
 import React from "react";
-import { Typography, Box, Paper, Button, useTheme } from "@mui/material";
+import { Typography, Box, Paper, Button } from "@mui/material";
 import { motion } from "framer-motion";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { useNavigate } from "react-router-dom";
@@ -7,10 +7,7 @@ import { useNavigate } from "react-router-dom";
 const MotionPaper = motion(Paper);
 
 const ProtectedRoute = ({ user, children }) => {
-  const theme = useTheme();
   const navigate = useNavigate();
-
-  const isDark = theme.palette.mode === "dark";
 
   if (!user) {
     return (
@@ -20,7 +17,6 @@ const ProtectedRoute = ({ user, children }) => {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          px: 2,
         }}
       >
         <MotionPaper
@@ -33,41 +29,24 @@ const ProtectedRoute = ({ user, children }) => {
             borderRadius: 4,
             textAlign: "center",
             backdropFilter: "blur(12px)",
-            background: isDark
-              ? "linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02))"
-              : "linear-gradient(135deg, rgba(255,255,255,0.95), rgba(250,250,250,0.85))",
-            border: "1px solid rgba(255,255,255,0.2)",
-            boxShadow: isDark
-              ? "0 10px 30px rgba(0,0,0,0.4)"
-              : "0 10px 30px rgba(0,0,0,0.1)",
-            color: isDark ? "#fff" : "#333",
+            background:
+              "linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02))",
+            border: "1px solid rgba(255,255,255,0.15)",
+            boxShadow: "0 10px 30px rgba(0,0,0,0.4)",
+            color: "#fff",
             maxWidth: 500,
           }}
         >
           <LockOutlinedIcon
             color="error"
-            sx={{
-              fontSize: 60,
-              mb: 2,
-              filter: isDark
-                ? "drop-shadow(0 0 8px red)"
-                : "drop-shadow(0 0 4px rgba(255,0,0,0.4))",
-            }}
+            sx={{ fontSize: 60, mb: 2, filter: "drop-shadow(0 0 8px red)" }}
           />
-          <Typography
-            variant="h5"
-            fontWeight={600}
-            gutterBottom
-            sx={{ color: isDark ? "#fff" : "#111" }}
-          >
+          <Typography variant="h5" fontWeight={600} gutterBottom>
             Restricted Access
           </Typography>
           <Typography
             variant="body1"
-            sx={{
-              mb: 3,
-              color: isDark ? "rgba(255,255,255,0.8)" : "text.secondary",
-            }}
+            sx={{ mb: 3, color: "rgba(255,255,255,0.8)" }}
           >
             🚫 You are not authorized to view this page. <br />
             Please sign in to continue or return to the homepage.
@@ -82,9 +61,7 @@ const ProtectedRoute = ({ user, children }) => {
               px: 4,
               py: 1.2,
               background: "linear-gradient(45deg, #ff1744, #f50057)",
-              boxShadow: isDark
-                ? "0 4px 20px rgba(255, 23, 68, 0.4)"
-                : "0 4px 10px rgba(255, 23, 68, 0.2)",
+              boxShadow: "0 4px 20px rgba(255, 23, 68, 0.4)",
             }}
           >
             Go to Login
