@@ -19,8 +19,8 @@ import Contact from "./components/Contact";
 function App() {
   return (
     <>
+      <ToastContainer key="toast-container" position="top-center" />
       <Header />
-      <ToastContainer position="top-center" />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/detail/:id" element={<Detail />} />

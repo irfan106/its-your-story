@@ -1,8 +1,7 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
-import { ThemeContextProvider } from "./context/ThemeContext";
 import {
   ApolloClient,
   ApolloProvider,
@@ -14,31 +13,40 @@ import { AppContextProvider } from "./context/AppContext";
 import { BrowserRouter } from "react-router-dom";
 import { auth } from "./firebase";
 import { onAuthStateChanged } from "firebase/auth";
+import { ThemeContextProvider } from "./context/ThemeContext";
 
-const httpLink = createHttpLink({
-  uri: "http://localhost:5000/graphql",
-});
+const AppWithApollo = () => {
+  const [client, setClient] = useState(null);
 
-onAuthStateChanged(auth, async (user) => {
-  const token = user ? await user.getIdToken() : null;
+  useEffect(() => {
+    const httpLink = createHttpLink({
+      uri: "http://localhost:5000/graphql",
+    });
 
-  const authLink = setContext((_, { headers }) => {
-    console.log("Frontend sending token:", token); // ✅ Log token
-    return {
-      headers: {
-        ...headers,
-        Authorization: token ? `Bearer ${token}` : "",
-      },
-    };
-  });
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      const token = user ? await user.getIdToken() : null;
 
-  const client = new ApolloClient({
-    link: authLink.concat(httpLink),
-    cache: new InMemoryCache(),
-  });
+      const authLink = setContext((_, { headers }) => ({
+        headers: {
+          ...headers,
+          Authorization: token ? `Bearer ${token}` : "",
+        },
+      }));
 
-  const root = ReactDOM.createRoot(document.getElementById("root"));
-  root.render(
+      const apolloClient = new ApolloClient({
+        link: authLink.concat(httpLink),
+        cache: new InMemoryCache(),
+      });
+
+      setClient(apolloClient);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  if (!client) return <div>Loading...</div>;
+
+  return (
     <ApolloProvider client={client}>
       <BrowserRouter>
         <ThemeContextProvider>
@@ -49,4 +57,7 @@ onAuthStateChanged(auth, async (user) => {
       </BrowserRouter>
     </ApolloProvider>
   );
-});
+};
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<AppWithApollo />);

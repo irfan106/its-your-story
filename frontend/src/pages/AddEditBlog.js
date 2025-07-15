@@ -31,6 +31,7 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import ProtectedRoute from "./ProtectedRoute";
 
 const initialState = {
   title: "",
@@ -147,109 +148,115 @@ const AddEditBlog = ({ user, setActive }) => {
   };
 
   return (
-    <Container maxWidth="md">
-      <Typography variant="h4" align="center" sx={{ my: 4 }}>
-        {id ? "Update Story" : "Upload a Story"}
-      </Typography>
+    <ProtectedRoute user={user}>
+      <Container maxWidth="md">
+        <Typography variant="h4" align="center" sx={{ my: 4 }}>
+          {id ? "Update Story" : "Upload a Story"}
+        </Typography>
 
-      <Box component="form" onSubmit={handleSubmit} noValidate>
-        <Grid container spacing={3}>
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              name="title"
-              label="Title"
-              variant="outlined"
-              value={title}
-              onChange={handleChange}
-              required
-            />
-          </Grid>
-
-          <Grid item xs={12}>
-            <ReactTagInput
-              tags={tags}
-              onChange={handleTags}
-              placeholder="Tags"
-            />
-          </Grid>
-
-          <Grid item xs={12}>
-            <FormControl component="fieldset">
-              <FormLabel>Is it a trending story?</FormLabel>
-              <RadioGroup
-                row
-                name="trending"
-                value={trending}
-                onChange={handleTrending}
-              >
-                <FormControlLabel value="yes" control={<Radio />} label="Yes" />
-                <FormControlLabel value="no" control={<Radio />} label="No" />
-              </RadioGroup>
-            </FormControl>
-          </Grid>
-
-          <Grid item xs={12}>
-            <FormControl fullWidth required>
-              <InputLabel>Category</InputLabel>
-              <Select
-                value={category}
-                onChange={handleCategoryChange}
-                label="Category"
-              >
-                {categoryOptions.map((cat, i) => (
-                  <MenuItem value={cat} key={i}>
-                    {cat}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Grid>
-
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              name="description"
-              label="Description"
-              multiline
-              rows={5}
-              variant="outlined"
-              value={description}
-              onChange={handleChange}
-              required
-            />
-          </Grid>
-
-          <Grid item xs={12}>
-            <Button variant="outlined" component="label">
-              Upload Image
-              <input
-                type="file"
-                hidden
-                onChange={(e) => setFile(e.target.files[0])}
+        <Box component="form" onSubmit={handleSubmit} noValidate>
+          <Grid container spacing={3}>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                name="title"
+                label="Title"
+                variant="outlined"
+                value={title}
+                onChange={handleChange}
+                required
               />
-            </Button>
-            {progress !== null && progress < 100 && (
-              <Box sx={{ mt: 2 }}>
-                <LinearProgress variant="determinate" value={progress} />
-              </Box>
-            )}
-          </Grid>
+            </Grid>
 
-          <Grid item xs={12}>
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              fullWidth
-              disabled={progress !== null && progress < 100}
-            >
-              {id ? "Update" : "Submit"}
-            </Button>
+            <Grid item xs={12}>
+              <ReactTagInput
+                tags={tags}
+                onChange={handleTags}
+                placeholder="Tags"
+              />
+            </Grid>
+
+            <Grid item xs={12}>
+              <FormControl component="fieldset">
+                <FormLabel>Is it a trending story?</FormLabel>
+                <RadioGroup
+                  row
+                  name="trending"
+                  value={trending}
+                  onChange={handleTrending}
+                >
+                  <FormControlLabel
+                    value="yes"
+                    control={<Radio />}
+                    label="Yes"
+                  />
+                  <FormControlLabel value="no" control={<Radio />} label="No" />
+                </RadioGroup>
+              </FormControl>
+            </Grid>
+
+            <Grid item xs={12}>
+              <FormControl fullWidth required>
+                <InputLabel>Category</InputLabel>
+                <Select
+                  value={category}
+                  onChange={handleCategoryChange}
+                  label="Category"
+                >
+                  {categoryOptions.map((cat, i) => (
+                    <MenuItem value={cat} key={i}>
+                      {cat}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                name="description"
+                label="Description"
+                multiline
+                rows={5}
+                variant="outlined"
+                value={description}
+                onChange={handleChange}
+                required
+              />
+            </Grid>
+
+            <Grid item xs={12}>
+              <Button variant="outlined" component="label">
+                Upload Image
+                <input
+                  type="file"
+                  hidden
+                  onChange={(e) => setFile(e.target.files[0])}
+                />
+              </Button>
+              {progress !== null && progress < 100 && (
+                <Box sx={{ mt: 2 }}>
+                  <LinearProgress variant="determinate" value={progress} />
+                </Box>
+              )}
+            </Grid>
+
+            <Grid item xs={12}>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                fullWidth
+                disabled={progress !== null && progress < 100}
+              >
+                {id ? "Update" : "Submit"}
+              </Button>
+            </Grid>
           </Grid>
-        </Grid>
-      </Box>
-    </Container>
+        </Box>
+      </Container>
+    </ProtectedRoute>
   );
 };
 

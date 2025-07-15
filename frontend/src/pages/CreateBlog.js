@@ -1,4 +1,3 @@
-// pages/CreateBlog.js
 import React, { useState, useEffect } from "react";
 import BlogForm from "../components/BlogForm";
 import { useNavigate } from "react-router-dom";
@@ -7,6 +6,7 @@ import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { toast } from "react-toastify";
 import { Container, Typography } from "@mui/material";
+import ProtectedRoute from "./ProtectedRoute";
 
 const initialState = {
   title: "",
@@ -94,25 +94,28 @@ const CreateBlog = ({ user, setActive }) => {
       console.error(err);
     }
   };
+  console.log(user, "user");
 
   return (
-    <Container maxWidth="md">
-      <Typography variant="h4" align="center" sx={{ my: 4 }}>
-        Upload a Story
-      </Typography>
-      <BlogForm
-        form={form}
-        handleChange={handleChange}
-        handleSubmit={handleSubmit}
-        handleTags={handleTags}
-        handleTrending={handleTrending}
-        handleCategoryChange={handleCategoryChange}
-        handleFileChange={handleFileChange}
-        progress={progress}
-        imagePreview={imagePreview}
-        isEdit={false}
-      />
-    </Container>
+    <ProtectedRoute user={user}>
+      <Container maxWidth="md">
+        <Typography variant="h4" align="center" sx={{ my: 4 }}>
+          Upload a Story
+        </Typography>
+        <BlogForm
+          form={form}
+          handleChange={handleChange}
+          handleSubmit={handleSubmit}
+          handleTags={handleTags}
+          handleTrending={handleTrending}
+          handleCategoryChange={handleCategoryChange}
+          handleFileChange={handleFileChange}
+          progress={progress}
+          imagePreview={imagePreview}
+          isEdit={false}
+        />
+      </Container>
+    </ProtectedRoute>
   );
 };
 
