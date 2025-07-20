@@ -1,262 +1,226 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
+  Box,
+  Button,
   Container,
   Grid,
-  TextField,
-  Button,
-  Typography,
-  Box,
-  FormControl,
-  FormLabel,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
   MenuItem,
+  Paper,
   Select,
-  InputLabel,
-  LinearProgress,
+  TextField,
+  Typography,
+  useTheme,
+  Chip,
 } from "@mui/material";
-import ReactTagInput from "@pathofdev/react-tag-input";
+import { motion } from "framer-motion";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-import {
-  serverTimestamp,
-  addDoc,
-  updateDoc,
-  collection,
-  doc,
-} from "firebase/firestore";
-import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { db, storage } from "../firebase";
-import DOMPurify from "dompurify";
 
-const initialState = {
-  title: "",
-  tags: [],
-  trending: "no",
-  category: "",
-  description: "",
-};
+const MotionPaper = motion(Paper);
 
-const categoryOptions = [
-  "Fantasy",
-  "Fashion",
-  "Technology",
-  "Food",
-  "Politics",
-  "Sports",
-  "Business",
-];
+const BlogForm = ({
+  form,
+  setForm,
+  handleSubmit,
+  categories = [],
+  editing,
+}) => {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
 
-const BlogForm = ({ user, initialData = null, blogId = null }) => {
-  const [form, setForm] = useState(initialState);
-  const [file, setFile] = useState(null);
-  const [progress, setProgress] = useState(null);
-  const [wordCount, setWordCount] = useState(0);
-  const [charCount, setCharCount] = useState(0);
-
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (initialData) {
-      setForm(initialData);
-    }
-  }, [initialData]);
-
-  useEffect(() => {
-    if (file) {
-      const uploadFile = () => {
-        const storageRef = ref(storage, file.name);
-        const uploadTask = uploadBytesResumable(storageRef, file);
-
-        uploadTask.on(
-          "state_changed",
-          (snapshot) => {
-            const prog =
-              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            setProgress(prog);
-          },
-          (error) => {
-            console.error(error);
-            toast.error("Image upload failed");
-          },
-          () => {
-            getDownloadURL(uploadTask.snapshot.ref).then((url) => {
-              toast.info("Image uploaded successfully");
-              setForm((prev) => ({ ...prev, imgUrl: url }));
-            });
-          }
-        );
-      };
-      uploadFile();
-    }
-  }, [file]);
+  const inputEffect = {
+    transition: "0.3s",
+    "&:hover": {
+      boxShadow: `0 0 0 2px ${isDark ? "#90caf940" : "#1976d230"}`,
+    },
+    "&.Mui-focused": {
+      boxShadow: `0 0 0 2px ${isDark ? "#90caf980" : "#1976d260"}`,
+    },
+  };
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleTags = (tags) => {
-    setForm((prev) => ({ ...prev, tags }));
+  const handleCategoryChange = (e) => {
+    setForm({ ...form, category: e.target.value });
   };
 
-  const handleDescriptionChange = (value) => {
-    setForm((prev) => ({ ...prev, description: value }));
-
-    const plainText = DOMPurify.sanitize(value, {
-      USE_PROFILES: { html: false },
-    })
-      .replace(/<[^>]+>/g, "")
-      .replace(/&nbsp;/g, " ")
-      .trim();
-
-    const words = plainText.split(/\s+/).filter(Boolean);
-    setWordCount(words.length);
-    setCharCount(plainText.length);
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const { title, tags, category, trending, description } = form;
-
-    if (!title || !category || !tags.length || !description || !trending) {
-      return toast.error("All fields are required.");
-    }
-
-    const blogData = {
-      ...form,
-      timestamp: serverTimestamp(),
-      author: user.displayName,
-      userId: user.uid,
-    };
-
-    try {
-      if (blogId) {
-        await updateDoc(doc(db, "blogs", blogId), blogData);
-        toast.success("Story updated successfully");
-      } else {
-        await addDoc(collection(db, "blogs"), blogData);
-        toast.success("Story uploaded successfully");
+  const handleTagKeyDown = (e) => {
+    if (e.key === "Enter" && e.target.value.trim()) {
+      e.preventDefault();
+      const newTag = e.target.value.trim();
+      if (!form.tags.includes(newTag)) {
+        setForm((prev) => ({
+          ...prev,
+          tags: [...prev.tags, newTag],
+        }));
       }
-      navigate("/");
-    } catch (error) {
-      console.error(error);
-      toast.error("Something went wrong");
+      e.target.value = "";
     }
+  };
+
+  const handleTagDelete = (tagToDelete) => {
+    setForm((prev) => ({
+      ...prev,
+      tags: prev.tags.filter((tag) => tag !== tagToDelete),
+    }));
+  };
+
+  const handleQuillChange = (value) => {
+    setForm({ ...form, description: value });
   };
 
   return (
-    <Container maxWidth="md">
-      <Typography variant="h4" align="center" sx={{ my: 4 }}>
-        {blogId ? "Update Story" : "Upload a Story"}
-      </Typography>
+    <Container maxWidth="md" sx={{ py: 6 }}>
+      <MotionPaper
+        elevation={8}
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        sx={{
+          p: 4,
+          borderRadius: 4,
+          backdropFilter: "blur(12px)",
+          background: isDark
+            ? "rgba(30, 30, 30, 0.6)"
+            : "rgba(255, 255, 255, 0.85)",
+          border: `1px solid ${
+            isDark ? "rgba(255,255,255,0.2)" : "rgba(0,0,0,0.1)"
+          }`,
+          boxShadow: isDark
+            ? "0 8px 32px rgba(0,0,0,0.8)"
+            : "0 8px 32px rgba(0,0,0,0.1)",
+        }}
+      >
+        <Typography variant="h5" gutterBottom fontWeight={600}>
+          {editing ? "Edit Blog" : "Create New Blog"}
+        </Typography>
 
-      <Box component="form" onSubmit={handleSubmit} noValidate>
-        <Grid container spacing={3}>
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              name="title"
-              label="Title"
-              variant="outlined"
-              value={form.title}
-              onChange={handleChange}
-              required
-            />
-          </Grid>
-
-          <Grid item xs={12}>
-            <ReactTagInput
-              tags={form.tags}
-              onChange={handleTags}
-              placeholder="Tags"
-            />
-          </Grid>
-
-          <Grid item xs={12}>
-            <FormControl component="fieldset">
-              <FormLabel>Is it a trending story?</FormLabel>
-              <RadioGroup
-                row
-                name="trending"
-                value={form.trending}
+        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 3 }}>
+          <Grid container spacing={3}>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Title"
+                name="title"
+                value={form.title}
                 onChange={handleChange}
-              >
-                <FormControlLabel value="yes" control={<Radio />} label="Yes" />
-                <FormControlLabel value="no" control={<Radio />} label="No" />
-              </RadioGroup>
-            </FormControl>
-          </Grid>
+                variant="outlined"
+                required
+                InputProps={{ sx: inputEffect }}
+                sx={{
+                  bgcolor: isDark
+                    ? "rgba(255,255,255,0.05)"
+                    : "rgba(0,0,0,0.03)",
+                  borderRadius: 1,
+                }}
+              />
+            </Grid>
 
-          <Grid item xs={12}>
-            <FormControl fullWidth required>
-              <InputLabel>Category</InputLabel>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Subtitle"
+                name="subtitle"
+                value={form.subtitle}
+                onChange={handleChange}
+                variant="outlined"
+                InputProps={{ sx: inputEffect }}
+                sx={{
+                  bgcolor: isDark
+                    ? "rgba(255,255,255,0.05)"
+                    : "rgba(0,0,0,0.03)",
+                  borderRadius: 1,
+                }}
+              />
+            </Grid>
+
+            <Grid item xs={12}>
               <Select
+                fullWidth
                 value={form.category}
-                onChange={handleChange}
+                onChange={handleCategoryChange}
                 name="category"
-                label="Category"
+                displayEmpty
+                required
+                sx={{
+                  bgcolor: isDark
+                    ? "rgba(255,255,255,0.05)"
+                    : "rgba(0,0,0,0.03)",
+                  borderRadius: 1,
+                  "& .MuiSelect-select": { py: 1.5 },
+                  "& fieldset": { border: "none" },
+                  ...inputEffect,
+                }}
               >
-                {categoryOptions.map((cat) => (
+                <MenuItem value="" disabled>
+                  Select a Category
+                </MenuItem>
+                {categories.map((cat) => (
                   <MenuItem key={cat} value={cat}>
                     {cat}
                   </MenuItem>
                 ))}
               </Select>
-            </FormControl>
-          </Grid>
+            </Grid>
 
-          {/* 🔥 Rich Text Editor for Description with Word Count */}
-          <Grid item xs={12}>
-            <FormLabel>Description</FormLabel>
-            <ReactQuill
-              theme="snow"
-              value={form.description}
-              onChange={handleDescriptionChange}
-              style={{ height: "200px", marginBottom: "1rem" }}
-            />
-            <Typography
-              variant="body2"
-              color="textSecondary"
-              align="right"
-              sx={{ mb: 2 }}
-            >
-              Word Count: {wordCount} | Character Count: {charCount}
-            </Typography>
-          </Grid>
-
-          <Grid item xs={12}>
-            <Button variant="outlined" component="label">
-              Upload Image
-              <input
-                type="file"
-                hidden
-                onChange={(e) => setFile(e.target.files[0])}
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Tags (press Enter to add)"
+                variant="outlined"
+                onKeyDown={handleTagKeyDown}
+                InputProps={{ sx: inputEffect }}
+                sx={{
+                  bgcolor: isDark
+                    ? "rgba(255,255,255,0.05)"
+                    : "rgba(0,0,0,0.03)",
+                  borderRadius: 1,
+                }}
               />
-            </Button>
-            {progress !== null && progress < 100 && (
-              <Box sx={{ mt: 2 }}>
-                <LinearProgress variant="determinate" value={progress} />
+              <Box sx={{ mt: 1 }}>
+                {form.tags.map((tag) => (
+                  <Chip
+                    key={tag}
+                    label={tag}
+                    onDelete={() => handleTagDelete(tag)}
+                    sx={{ m: 0.5 }}
+                    color="primary"
+                  />
+                ))}
               </Box>
-            )}
-          </Grid>
+            </Grid>
 
-          <Grid item xs={12}>
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              fullWidth
-              disabled={progress !== null && progress < 100}
-            >
-              {blogId ? "Update" : "Submit"}
-            </Button>
+            <Grid item xs={12}>
+              <Typography variant="subtitle1" gutterBottom>
+                Content
+              </Typography>
+              <ReactQuill
+                value={form.description}
+                onChange={handleQuillChange}
+                theme="snow"
+                style={{
+                  background: isDark ? "#1e1e1e" : "#fff",
+                  color: isDark ? "#eee" : "#111",
+                  borderRadius: 8,
+                }}
+              />
+            </Grid>
+
+            <Grid item xs={12} textAlign="right">
+              <Button
+                type="submit"
+                variant="contained"
+                size="large"
+                sx={{ mt: 3, px: 4 }}
+              >
+                {editing ? "Update Blog" : "Create Blog"}
+              </Button>
+            </Grid>
           </Grid>
-        </Grid>
-      </Box>
+        </Box>
+      </MotionPaper>
     </Container>
   );
 };

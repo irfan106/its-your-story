@@ -14,6 +14,8 @@ import { BrowserRouter } from "react-router-dom";
 import { auth } from "./firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { ThemeContextProvider } from "./context/ThemeContext";
+import { Stack } from "@mui/material";
+import Spinner from "./components/Spinner";
 
 const AppWithApollo = () => {
   const [client, setClient] = useState(null);
@@ -44,7 +46,17 @@ const AppWithApollo = () => {
     return () => unsubscribe();
   }, []);
 
-  if (!client) return <div>Loading...</div>;
+  if (!client)
+    return (
+      <Stack
+        alignItems="center"
+        justifyContent="center"
+        height="40vh"
+        sx={{ mt: 4 }}
+      >
+        <Spinner />
+      </Stack>
+    );
 
   return (
     <ApolloProvider client={client}>

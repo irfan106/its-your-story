@@ -5,22 +5,26 @@ import { db, storage } from "../firebase";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { toast } from "react-toastify";
-import { Container, Typography } from "@mui/material";
+import { Container } from "@mui/material";
 import ProtectedRoute from "./ProtectedRoute";
+import { useAppContext } from "../context/AppContext";
 
 const initialState = {
   title: "",
+  subtitle: "",
   tags: [],
   trending: "no",
   category: "",
   description: "",
+  imgUrl: "",
 };
 
-const CreateBlog = ({ user, setActive }) => {
+const CreateBlog = () => {
   const [form, setForm] = useState(initialState);
   const [file, setFile] = useState(null);
   const [progress, setProgress] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+  const { user } = useAppContext();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -47,40 +51,17 @@ const CreateBlog = ({ user, setActive }) => {
     }
   }, [file]);
 
-  const handleFileChange = (e) => {
-    const selected = e.target.files[0];
-    if (selected) {
-      setFile(selected);
-      setImagePreview(URL.createObjectURL(selected));
-    }
-  };
-
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleTags = (tags) => {
-    setForm({ ...form, tags });
-  };
-
-  const handleTrending = (e) => {
-    setForm({ ...form, trending: e.target.value });
-  };
-
-  const handleCategoryChange = (e) => {
-    setForm({ ...form, category: e.target.value });
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { title, tags, category, trending, description } = form;
+    const { title, subtitle, tags, category, description } = form;
 
-    if (!title || !category || !tags.length || !description || !trending) {
+    if (!title || !subtitle || !category || !tags.length || !description) {
       return toast.error("All fields are required.");
     }
 
     const blogData = {
       ...form,
+      views: 0,
       timestamp: serverTimestamp(),
       author: user.displayName,
       userId: user.uid,
@@ -88,31 +69,22 @@ const CreateBlog = ({ user, setActive }) => {
 
     try {
       await addDoc(collection(db, "blogs"), blogData);
-      toast.success("Story uploaded successfully");
+      toast.success("Blog created successfully");
       navigate("/");
     } catch (err) {
       console.error(err);
     }
   };
-  console.log(user, "user");
 
   return (
     <ProtectedRoute user={user}>
       <Container maxWidth="md">
-        <Typography variant="h4" align="center" sx={{ my: 4 }}>
-          Upload a Story
-        </Typography>
         <BlogForm
           form={form}
-          handleChange={handleChange}
+          setForm={setForm}
           handleSubmit={handleSubmit}
-          handleTags={handleTags}
-          handleTrending={handleTrending}
-          handleCategoryChange={handleCategoryChange}
-          handleFileChange={handleFileChange}
-          progress={progress}
-          imagePreview={imagePreview}
-          isEdit={false}
+          editing={false}
+          categories={["Tech", "Travel", "Lifestyle", "Finance", "Food"]}
         />
       </Container>
     </ProtectedRoute>

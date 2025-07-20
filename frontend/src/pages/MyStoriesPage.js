@@ -1,28 +1,20 @@
 import React, { useState } from "react";
-import {
-  Box,
-  Typography,
-  Grid,
-  Card,
-  CardMedia,
-  CardContent,
-  Button,
-  Stack,
-} from "@mui/material";
+import { Box, Typography, Grid, useTheme, Stack } from "@mui/material";
 import { useAppContext } from "../context/AppContext";
 import { useMyPaginatedBlogs } from "../hooks/useMyPaginatedBlogs";
-import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
 import ProtectedRoute from "./ProtectedRoute";
-
-const MotionCard = motion(Card);
+import BlogCard from "../components/BlogCard";
+import PaginationControls from "../components/PaginationControls";
+import Spinner from "../components/Spinner";
 
 const MyStoriesPage = () => {
   const { user } = useAppContext();
   const [page, setPage] = useState(1);
   const pageSize = 6;
+  const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
 
-  const { blogs, isLoading, currentPage, totalPages, refetchPage, error } =
+  const { blogs, isLoading, currentPage, totalPages, refetchPage } =
     useMyPaginatedBlogs(page, pageSize);
 
   const handlePageChange = (newPage) => {
@@ -32,13 +24,31 @@ const MyStoriesPage = () => {
 
   return (
     <ProtectedRoute user={user}>
-      <Box sx={{ p: 4, backdropFilter: "blur(12px)", minHeight: "100vh" }}>
-        <Typography variant="h4" sx={{ mb: 4 }} align="center">
+      <Box sx={{ py: 6, px: { xs: 2, md: 10 } }}>
+        <Typography
+          variant="h4"
+          align="center"
+          sx={{
+            mb: 6,
+            fontWeight: 700,
+            background: isDark
+              ? "linear-gradient(to right, #f4f4f5, #e5e7eb)"
+              : "linear-gradient(to right, #1f2937, #4b5563)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+          }}
+        >
           My Stories
         </Typography>
-
         {isLoading ? (
-          <Typography align="center">Loading...</Typography>
+          <Stack
+            alignItems="center"
+            justifyContent="center"
+            height="40vh"
+            sx={{ mt: 4 }}
+          >
+            <Spinner />
+          </Stack>
         ) : blogs.length === 0 ? (
           <Typography align="center">
             You haven't published any stories yet.
@@ -48,66 +58,16 @@ const MyStoriesPage = () => {
             <Grid container spacing={4}>
               {blogs.map((blog) => (
                 <Grid item xs={12} sm={6} md={4} key={blog.id}>
-                  <MotionCard
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.98 }}
-                    transition={{ duration: 0.3 }}
-                    sx={{
-                      bgcolor: "rgba(255, 255, 255, 0.08)",
-                      borderRadius: 4,
-                      border: "1px solid rgba(255,255,255,0.2)",
-                      boxShadow: "0 8px 24px rgba(0,0,0,0.2)",
-                      backdropFilter: "blur(12px)",
-                    }}
-                  >
-                    <CardMedia
-                      component="img"
-                      height="180"
-                      image={blog.imgUrl}
-                      alt={blog.title}
-                      sx={{ borderTopLeftRadius: 16, borderTopRightRadius: 16 }}
-                    />
-                    <CardContent>
-                      <Typography variant="subtitle2" color="text.secondary">
-                        {blog.category}
-                      </Typography>
-                      <Typography variant="h6" gutterBottom>
-                        {blog.title.length > 40
-                          ? blog.title.slice(0, 37) + "..."
-                          : blog.title}
-                      </Typography>
-                      <Typography variant="body2" sx={{ mb: 2 }}>
-                        {blog.description.length > 100
-                          ? blog.description.slice(0, 97) + "..."
-                          : blog.description}
-                      </Typography>
-                      <Button
-                        component={Link}
-                        to={`/detail/${blog.id}`}
-                        variant="outlined"
-                        size="small"
-                        sx={{ mt: 1 }}
-                      >
-                        Read More
-                      </Button>
-                    </CardContent>
-                  </MotionCard>
+                  <BlogCard blog={blog} />
                 </Grid>
               ))}
             </Grid>
 
-            <Stack direction="row" justifyContent="center" sx={{ mt: 4 }}>
-              {Array.from({ length: totalPages }).map((_, index) => (
-                <Button
-                  key={index}
-                  variant={currentPage === index + 1 ? "contained" : "outlined"}
-                  onClick={() => handlePageChange(index + 1)}
-                  sx={{ mx: 0.5 }}
-                >
-                  {index + 1}
-                </Button>
-              ))}
-            </Stack>
+            <PaginationControls
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
           </>
         )}
       </Box>

@@ -24,7 +24,7 @@ const resolvers = {
       try {
         const snapshot = await db
           .collection("blogs")
-          .where("trending", "==", "yes")
+          .orderBy("views", "desc")
           .limit(limit)
           .get();
 

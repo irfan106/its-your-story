@@ -1,4 +1,3 @@
-// pages/EditBlog.js
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { doc, getDoc, updateDoc, serverTimestamp } from "firebase/firestore";
@@ -6,7 +5,8 @@ import { db, storage } from "../firebase";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { toast } from "react-toastify";
 import BlogForm from "../components/BlogForm";
-import { Container, Typography } from "@mui/material";
+import { Container, Stack, Typography } from "@mui/material";
+import Spinner from "../components/Spinner";
 
 const EditBlog = ({ user, setActive }) => {
   const { id } = useParams();
@@ -21,7 +21,7 @@ const EditBlog = ({ user, setActive }) => {
       const snap = await getDoc(doc(db, "blogs", id));
       if (snap.exists()) {
         const data = snap.data();
-        setForm(data);
+        setForm({ ...data, tags: data.tags || [] });
         setImagePreview(data.imgUrl || null);
       }
     };
@@ -41,7 +41,7 @@ const EditBlog = ({ user, setActive }) => {
           setProgress(prog);
         },
         (error) => {
-          console.log(error);
+          console.error("Upload error:", error);
         },
         () => {
           getDownloadURL(uploadTask.snapshot.ref).then((url) => {
@@ -61,27 +61,11 @@ const EditBlog = ({ user, setActive }) => {
     }
   };
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleTags = (tags) => {
-    setForm({ ...form, tags });
-  };
-
-  const handleTrending = (e) => {
-    setForm({ ...form, trending: e.target.value });
-  };
-
-  const handleCategoryChange = (e) => {
-    setForm({ ...form, category: e.target.value });
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { title, tags, category, trending, description } = form;
+    const { title, tags, category, content } = form;
 
-    if (!title || !category || !tags.length || !description || !trending) {
+    if (!title || !category || !tags.length || !content) {
       return toast.error("All fields are required.");
     }
 
@@ -97,32 +81,35 @@ const EditBlog = ({ user, setActive }) => {
       toast.success("Story updated successfully");
       navigate("/");
     } catch (err) {
-      console.error(err);
+      console.error("Update failed:", err);
     }
   };
 
   return form ? (
     <Container maxWidth="md">
       <Typography variant="h4" align="center" sx={{ my: 4 }}>
-        Update Story
+        Edit Blog
       </Typography>
       <BlogForm
         form={form}
-        handleChange={handleChange}
+        setForm={setForm}
         handleSubmit={handleSubmit}
-        handleTags={handleTags}
-        handleTrending={handleTrending}
-        handleCategoryChange={handleCategoryChange}
+        editing={true}
+        imagePreview={imagePreview}
         handleFileChange={handleFileChange}
         progress={progress}
-        imagePreview={imagePreview}
-        isEdit={true}
+        categories={["Technology", "Travel", "Lifestyle", "Health", "Other"]}
       />
     </Container>
   ) : (
-    <Typography align="center" sx={{ mt: 10 }}>
-      Loading...
-    </Typography>
+    <Stack
+      alignItems="center"
+      justifyContent="center"
+      height="40vh"
+      sx={{ mt: 4 }}
+    >
+      <Spinner />
+    </Stack>
   );
 };
 

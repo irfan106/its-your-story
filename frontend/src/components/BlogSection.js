@@ -4,13 +4,13 @@ import {
   Grid,
   Typography,
   Card,
-  CardMedia,
   CardContent,
   useTheme,
   Link as MuiLink,
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import { excerpt } from "../utility";
+import { getRandomDefaultImg } from "../utility/general.utils";
 
 const BlogSection = ({ blogs }) => {
   const theme = useTheme();
@@ -64,24 +64,15 @@ const BlogSection = ({ blogs }) => {
         >
           <Box
             sx={{
+              width: { xs: "100%", md: 250 },
+              height: 250,
               flexShrink: 0,
-              width: { xs: "100%", md: 300 },
-              height: { xs: 220, md: 280 },
-              overflow: "hidden",
+              backgroundImage: `url(${item.imgUrl || getRandomDefaultImg()})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              backgroundRepeat: "no-repeat",
             }}
-          >
-            <CardMedia
-              component="img"
-              image={item.imgUrl}
-              alt={item.title}
-              sx={{
-                width: "100%",
-                height: "100%",
-                objectFit: "cover",
-                objectPosition: "center",
-              }}
-            />
-          </Box>
+          />
 
           <Box sx={{ flex: 1, p: 3 }}>
             <CardContent sx={{ p: 0 }}>
@@ -105,8 +96,8 @@ const BlogSection = ({ blogs }) => {
                 })}
               </Typography>
 
-              <Typography variant="body2" sx={{ mb: 2 }}>
-                {excerpt(item.description, 110)}{" "}
+              <Typography variant="body2">
+                {excerpt(item.description, 150)}{" "}
                 <MuiLink
                   component={Link}
                   to={`/detail/${item.id}`}

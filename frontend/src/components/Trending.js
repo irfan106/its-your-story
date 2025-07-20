@@ -15,6 +15,7 @@ import "swiper/css/navigation";
 
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import { getRandomDefaultImg } from "../utility/general.utils";
 
 const Trending = ({ blogs }) => {
   const prevRef = useRef(null);
@@ -41,7 +42,6 @@ const Trending = ({ blogs }) => {
       </Typography>
 
       <Box sx={{ position: "relative" }}>
-        {/* Left Arrow */}
         <IconButton
           ref={prevRef}
           sx={{
@@ -81,8 +81,6 @@ const Trending = ({ blogs }) => {
         >
           <ArrowBackIosNewIcon fontSize="small" />
         </IconButton>
-
-        {/* Right Arrow */}
         <IconButton
           ref={nextRef}
           sx={{
@@ -122,8 +120,6 @@ const Trending = ({ blogs }) => {
         >
           <ArrowForwardIosIcon fontSize="small" />
         </IconButton>
-
-        {/* Swiper Slider */}
         <Swiper
           modules={[Navigation]}
           spaceBetween={20}
@@ -179,14 +175,14 @@ const Trending = ({ blogs }) => {
                 >
                   <Box sx={{ position: "relative", height: "100%" }}>
                     <CardMedia
-                      component="img"
-                      height="180"
-                      image={item.imgUrl}
-                      alt={item.title}
+                      component="div"
                       sx={{
-                        width: "100%",
-                        objectFit: "cover",
-                        transition: "transform 0.4s ease",
+                        height: 200,
+                        backgroundImage: `url(${
+                          item.imgUrl || getRandomDefaultImg()
+                        })`,
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
                         "&:hover": {
                           transform: "scale(1.05)",
                         },

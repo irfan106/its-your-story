@@ -16,11 +16,13 @@ import ContactPage from "./pages/ContactPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import Footer from "./components/Footer";
 import AboutPage from "./pages/AboutPage";
+import UserProfilePageWrapper from "./pages/UserProfilePageWrapper";
+import DashboardPage from "./pages/DashboardPage";
 
 function App() {
   return (
     <>
-      <ToastContainer key="toast-container" position="top-center" />
+      <ToastContainer key="toast-container" position="top-right" />
       <Navbar />
       <Routes>
         <Route path="/" element={<HomePage />} />
@@ -32,6 +34,8 @@ function App() {
         <Route path="/explore" element={<ExplorePage />} />
         <Route path="/my-stories" element={<MyStoriesPage />} />
         <Route path="/contact" element={<ContactPage />} />
+        <Route path="/user/:userId" element={<UserProfilePageWrapper />} />
+        <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
       <Footer />

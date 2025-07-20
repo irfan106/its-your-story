@@ -206,6 +206,17 @@ const Navbar = () => {
                 transformOrigin={{ vertical: "top", horizontal: "right" }}
               >
                 <MenuItem
+                  component={Link}
+                  to="/dashboard"
+                  onClick={() => {
+                    handleMenuClose();
+                    setActive("dashboard");
+                  }}
+                >
+                  Dashboard
+                </MenuItem>
+
+                <MenuItem
                   onClick={() => {
                     handleMenuClose();
                     handleLogout();

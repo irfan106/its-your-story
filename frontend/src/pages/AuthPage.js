@@ -16,7 +16,8 @@ import {
   Paper,
   Box,
 } from "@mui/material";
-import { auth } from "../firebase";
+import { auth, db } from "../firebase";
+import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../context/AppContext";
 import { motion } from "framer-motion";
@@ -87,9 +88,25 @@ const AuthPage = () => {
             email,
             password
           );
+
           await updateProfile(user, {
             displayName: `${firstName} ${lastName}`,
           });
+
+          await setDoc(doc(db, "users", user.uid), {
+            uid: user.uid,
+            email: user.email,
+            displayName: `${firstName} ${lastName}`,
+            firstName,
+            lastName,
+            avatar: "",
+            bio: "",
+            followers: 0,
+            following: 0,
+            createdAt: serverTimestamp(),
+          });
+
+          setUser(user);
           setActive("home");
           showSuccess("Account created!");
           setTimeout(() => navigate("/"), 200);

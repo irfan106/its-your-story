@@ -19,7 +19,7 @@ const HomePage = () => {
 
   const { data: blogs = [], isLoading: loadingBlogs } = useBlogs({
     latestOnly: true,
-    limit: 6,
+    limit: 5,
   });
 
   const { data: trendBlogs = [], isLoading: loadingTrending } =
