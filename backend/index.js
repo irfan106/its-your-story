@@ -3,9 +3,9 @@ const { ApolloServer } = require("apollo-server-express");
 const cors = require("cors");
 require("dotenv").config();
 
-const typeDefs = require("./src/schema");
-const resolvers = require("./src/resolvers");
-const { auth } = require("./src/firebase"); // Import Firebase Auth
+const typeDefs = require("./src/graphql/schemas");
+const resolvers = require("./src/graphql/resolvers");
+const { auth } = require("./src/firebase");
 
 async function startServer() {
   const app = express();
@@ -16,16 +16,12 @@ async function startServer() {
     resolvers,
     context: async ({ req }) => {
       const token = req.headers.authorization?.split("Bearer ")[1];
-      console.log("Received token:", token); // ✅ Should now log token
-
       if (!token) return { user: null };
-
       try {
         const decodedToken = await auth.verifyIdToken(token);
-        console.log("Decoded user:", decodedToken); // ✅ Log user
         return { user: decodedToken };
       } catch (error) {
-        console.error("Error verifying token:", error);
+        console.error("Auth error:", error);
         return { user: null };
       }
     },
