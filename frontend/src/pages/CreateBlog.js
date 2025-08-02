@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 import { Container } from "@mui/material";
 import ProtectedRoute from "./ProtectedRoute";
 import { useAppContext } from "../context/AppContext";
+import CommonBackground from "../components/CommonBackground";
 
 const initialState = {
   title: "",
@@ -23,7 +24,6 @@ const CreateBlog = () => {
   const [form, setForm] = useState(initialState);
   const [file, setFile] = useState(null);
   const [progress, setProgress] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null);
   const { user } = useAppContext();
   const navigate = useNavigate();
 
@@ -58,6 +58,9 @@ const CreateBlog = () => {
     if (!title || !subtitle || !category || !tags.length || !description) {
       return toast.error("All fields are required.");
     }
+    if (progress !== null && progress < 100) {
+      return toast.info("Please wait for the image to finish uploading.");
+    }
 
     const blogData = {
       ...form,
@@ -78,15 +81,19 @@ const CreateBlog = () => {
 
   return (
     <ProtectedRoute user={user}>
-      <Container maxWidth="md">
-        <BlogForm
-          form={form}
-          setForm={setForm}
-          handleSubmit={handleSubmit}
-          editing={false}
-          categories={["Tech", "Travel", "Lifestyle", "Finance", "Food"]}
-        />
-      </Container>
+      <CommonBackground>
+        <Container maxWidth="md">
+          <BlogForm
+            form={form}
+            setForm={setForm}
+            handleSubmit={handleSubmit}
+            editing={false}
+            setFile={setFile}
+            imagePreview={file}
+            categories={["Tech", "Travel", "Lifestyle", "Finance", "Food"]}
+          />
+        </Container>
+      </CommonBackground>
     </ProtectedRoute>
   );
 };

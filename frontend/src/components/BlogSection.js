@@ -42,9 +42,9 @@ const BlogSection = ({ blogs }) => {
             display: "flex",
             flexDirection: { xs: "column", md: "row" },
             overflow: "hidden",
-            backgroundColor: isDark
-              ? "rgba(255, 255, 255, 0.05)"
-              : "rgba(255, 255, 255, 0.25)",
+            background: isDark
+              ? "linear-gradient(135deg, rgba(30,30,30,0.85), rgba(50,50,50,0.85))"
+              : "linear-gradient(135deg, rgba(255,255,255,0.85), rgba(240,240,240,0.85))",
             backdropFilter: "blur(20px)",
             WebkitBackdropFilter: "blur(20px)",
             border: isDark
@@ -136,6 +136,7 @@ const BlogSection = ({ blogs }) => {
               backdropFilter: "blur(8px)",
               WebkitBackdropFilter: "blur(8px)",
               color: isDark ? "#fff" : "#111827",
+              textDecoration: "none",
               backgroundColor: isDark
                 ? "rgba(255, 255, 255, 0.05)"
                 : "rgba(255, 255, 255, 0.4)",
@@ -146,7 +147,7 @@ const BlogSection = ({ blogs }) => {
                 backgroundColor: isDark
                   ? "rgba(255, 255, 255, 0.1)"
                   : "rgba(255, 255, 255, 0.65)",
-                textDecoration: "none",
+                color: isDark ? "#fff" : "#111827",
                 boxShadow: isDark
                   ? "0 0 10px rgba(255, 255, 255, 0.08)"
                   : "0 6px 16px rgba(0, 0, 0, 0.12)",

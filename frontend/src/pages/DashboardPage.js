@@ -48,6 +48,9 @@ const DashboardPage = () => {
           mx: "auto",
           borderRadius: 4,
           textAlign: "center",
+          background: isDark
+            ? "linear-gradient(135deg, rgba(30,30,30,0.85), rgba(50,50,50,0.85))"
+            : "linear-gradient(135deg, rgba(255,255,255,0.85), rgba(240,240,240,0.85))",
         }}
       >
         <Avatar

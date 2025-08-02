@@ -15,6 +15,7 @@ import {
 import { motion } from "framer-motion";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import { toast } from "react-toastify";
 
 const MotionPaper = motion(Paper);
 
@@ -24,6 +25,8 @@ const BlogForm = ({
   handleSubmit,
   categories = [],
   editing,
+  setFile,
+  imagePreview,
 }) => {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
@@ -206,6 +209,45 @@ const BlogForm = ({
                   borderRadius: 8,
                 }}
               />
+            </Grid>
+
+            <Grid item xs={12}>
+              <Typography variant="subtitle1" gutterBottom>
+                Upload Blog Image
+              </Typography>
+              <Button variant="outlined" component="label" sx={{ mb: 2 }}>
+                Choose File
+                <input
+                  type="file"
+                  hidden
+                  accept="image/*"
+                  onChange={(e) => {
+                    const selectedFile = e.target.files[0];
+                    if (selectedFile) {
+                      const maxSize = 2 * 1024 * 1024;
+                      if (selectedFile.size > maxSize) {
+                        toast.error("Image must be less than 2MB");
+                        return;
+                      }
+                      setFile(selectedFile);
+                      setForm({ ...form, imgUrl: "" });
+                    }
+                  }}
+                />
+              </Button>
+              {imagePreview && (
+                <Box
+                  component="img"
+                  src={URL.createObjectURL(imagePreview)}
+                  alt="Preview"
+                  sx={{
+                    width: "100%",
+                    maxHeight: 300,
+                    objectFit: "cover",
+                    borderRadius: 2,
+                  }}
+                />
+              )}
             </Grid>
 
             <Grid item xs={12} textAlign="right">

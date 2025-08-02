@@ -22,9 +22,9 @@ const BlogCard = ({ blog }) => {
         flexDirection: "column",
         borderRadius: 5,
         overflow: "hidden",
-        backgroundColor: isDark
-          ? "rgba(255, 255, 255, 0.05)"
-          : "rgba(255, 255, 255, 0.35)",
+        background: isDark
+          ? "linear-gradient(135deg, rgba(30,30,30,0.85), rgba(50,50,50,0.85))"
+          : "linear-gradient(135deg, rgba(255,255,255,0.85), rgba(240,240,240,0.85))",
         backdropFilter: "blur(18px)",
         WebkitBackdropFilter: "blur(18px)",
         border: isDark

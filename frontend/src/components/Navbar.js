@@ -81,7 +81,6 @@ const Navbar = () => {
       position="sticky"
       elevation={4}
       sx={{
-        mb: 3,
         backdropFilter: "blur(12px)",
         backgroundColor:
           theme.palette.mode === "dark"

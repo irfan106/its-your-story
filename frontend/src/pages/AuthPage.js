@@ -1,40 +1,22 @@
 import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  updateProfile,
-} from "firebase/auth";
-import React, { useState } from "react";
-import {
   Container,
-  TextField,
-  Button,
-  Typography,
+  Paper,
   Snackbar,
   Alert,
-  Grid,
-  useTheme,
-  Paper,
+  Typography,
+  Divider,
   Box,
 } from "@mui/material";
-import { auth, db } from "../firebase";
-import { doc, setDoc, serverTimestamp } from "firebase/firestore";
-import { useNavigate } from "react-router-dom";
-import { useAppContext } from "../context/AppContext";
+import { useTheme } from "@mui/material/styles";
+import { useState } from "react";
 import { motion } from "framer-motion";
+import AuthForm from "../components/Auth/AuthForm";
+import GoogleLoginButton from "../components/Auth/GoogleLoginButton";
+import CommonBackground from "../components/CommonBackground";
 
 const MotionPaper = motion(Paper);
-const MotionBox = motion(Box);
-
-const initialState = {
-  firstName: "",
-  lastName: "",
-  email: "",
-  password: "",
-  confirmPassword: "",
-};
 
 const AuthPage = () => {
-  const [state, setState] = useState(initialState);
   const [signUp, setSignUp] = useState(false);
   const [snackbar, setSnackbar] = useState({
     open: false,
@@ -45,251 +27,116 @@ const AuthPage = () => {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
 
-  const { setUser, setActive } = useAppContext();
-  const { email, password, firstName, lastName, confirmPassword } = state;
-  const navigate = useNavigate();
+  const toggleMode = () => setSignUp((prev) => !prev);
 
-  const handleChange = (e) => {
-    setState({ ...state, [e.target.name]: e.target.value });
-  };
-
-  const showError = (message) => {
-    setSnackbar({ open: true, message, severity: "error" });
-  };
-
-  const showSuccess = (message) => {
-    setSnackbar({ open: true, message, severity: "success" });
-  };
-
-  const handleAuth = async (e) => {
-    e.preventDefault();
-    try {
-      if (!signUp) {
-        if (email && password) {
-          const { user } = await signInWithEmailAndPassword(
-            auth,
-            email,
-            password
-          );
-          setUser(user);
-          setActive("home");
-          showSuccess("Login successful!");
-          setTimeout(() => navigate("/"), 200);
-        } else {
-          showError("All fields are mandatory to fill");
-        }
-      } else {
-        if (password !== confirmPassword) {
-          return showError("Passwords don't match");
-        }
-        if (firstName && lastName && email && password) {
-          const { user } = await createUserWithEmailAndPassword(
-            auth,
-            email,
-            password
-          );
-
-          await updateProfile(user, {
-            displayName: `${firstName} ${lastName}`,
-          });
-
-          await setDoc(doc(db, "users", user.uid), {
-            uid: user.uid,
-            email: user.email,
-            displayName: `${firstName} ${lastName}`,
-            firstName,
-            lastName,
-            avatar: "",
-            bio: "",
-            followers: 0,
-            following: 0,
-            createdAt: serverTimestamp(),
-          });
-
-          setUser(user);
-          setActive("home");
-          showSuccess("Account created!");
-          setTimeout(() => navigate("/"), 200);
-        } else {
-          showError("All fields are mandatory to fill");
-        }
-      }
-    } catch (err) {
-      showError(err.message || "Authentication failed");
-    }
-  };
-
-  const inputEffect = {
-    transition: "0.3s",
-    "&:hover": {
-      boxShadow: `0 0 0 2px ${isDark ? "#90caf9" : "#1976d2"}30`,
-    },
-    "&.Mui-focused": {
-      boxShadow: `0 0 0 2px ${isDark ? "#90caf9" : "#1976d2"}60`,
-    },
+  const showSnackbar = (message, severity = "error") => {
+    setSnackbar({ open: true, message, severity });
   };
 
   return (
-    <Container maxWidth="sm" sx={{ py: 10 }}>
-      <MotionPaper
-        initial={{ opacity: 0, y: 50 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7 }}
-        elevation={6}
-        sx={{
-          p: { xs: 3, md: 5 },
-          borderRadius: 4,
-          backdropFilter: "blur(10px)",
-          background: isDark
-            ? "linear-gradient(135deg, rgba(30,30,30,0.85), rgba(50,50,50,0.85))"
-            : "linear-gradient(135deg, rgba(255,255,255,0.85), rgba(240,240,240,0.85))",
-          border: "1px solid rgba(255,255,255,0.15)",
-          boxShadow: isDark
-            ? "0 10px 40px rgba(0,0,0,0.6)"
-            : "0 10px 40px rgba(0,0,0,0.1)",
-        }}
-      >
-        <Typography
-          variant="h4"
-          fontWeight={700}
-          textAlign="center"
-          gutterBottom
+    <CommonBackground>
+      <Container maxWidth="sm" sx={{ py: 10 }}>
+        <MotionPaper
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          elevation={6}
+          sx={{
+            p: { xs: 3, sm: 4 },
+            borderRadius: 4,
+            backdropFilter: "blur(15px)",
+            background: isDark
+              ? "linear-gradient(135deg, rgba(30,30,30,0.85), rgba(50,50,50,0.85))"
+              : "linear-gradient(135deg, rgba(255,255,255,0.85), rgba(240,240,240,0.85))",
+            boxShadow: isDark
+              ? "0 10px 40px rgba(0,0,0,0.6)"
+              : "0 10px 30px rgba(0,0,0,0.1)",
+            border: "1px solid",
+            borderColor: isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)",
+            transition: "all 0.3s ease-in-out",
+            "& .MuiTextField-root": {
+              backgroundColor: isDark
+                ? "rgba(255,255,255,0.05)"
+                : "rgba(255,255,255,1)",
+              borderRadius: 2,
+              input: {
+                color: isDark ? "#fff" : "#222",
+              },
+            },
+            "& .MuiButton-root": {
+              borderRadius: 2,
+              py: 1.5,
+              fontWeight: 600,
+              fontSize: "1rem",
+              backdropFilter: "blur(8px)",
+              backgroundColor: isDark ? "rgba(255,255,255,0.06)" : "#f4f4f4",
+              color: isDark ? "#fff" : "#333",
+              transition: "0.3s ease",
+              boxShadow: isDark
+                ? "0 4px 20px rgba(0,0,0,0.4)"
+                : "0 4px 16px rgba(0,0,0,0.06)",
+              ":hover": {
+                transform: "scale(1.02)",
+                backgroundColor: isDark ? "rgba(255,255,255,0.1)" : "#e2e8f0",
+                boxShadow: isDark
+                  ? "0 6px 30px rgba(0,0,0,0.5)"
+                  : "0 6px 20px rgba(0,0,0,0.1)",
+              },
+            },
+          }}
         >
-          {signUp ? "Create Account" : "Welcome Back"}
-        </Typography>
-        <Typography
-          variant="subtitle1"
-          textAlign="center"
-          sx={{ mb: 4, color: "text.secondary" }}
-        >
-          {signUp
-            ? "Sign up to get started with your journey."
-            : "Sign in to continue exploring."}
-        </Typography>
+          <Typography
+            variant="h4"
+            textAlign="center"
+            gutterBottom
+            fontWeight={700}
+          >
+            {signUp ? "Create Account" : "Welcome Back"}
+          </Typography>
+          <Typography
+            variant="subtitle2"
+            textAlign="center"
+            sx={{ mb: 3, color: "text.secondary" }}
+          >
+            {signUp
+              ? "Sign up to get started."
+              : "Sign in to continue your journey."}
+          </Typography>
 
-        <form onSubmit={handleAuth}>
-          <Grid container spacing={3}>
-            {signUp && (
-              <>
-                <Grid item xs={6}>
-                  <TextField
-                    label="First Name"
-                    name="firstName"
-                    value={firstName}
-                    onChange={handleChange}
-                    required
-                    fullWidth
-                    variant="outlined"
-                    InputProps={{ sx: inputEffect }}
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <TextField
-                    label="Last Name"
-                    name="lastName"
-                    value={lastName}
-                    onChange={handleChange}
-                    required
-                    fullWidth
-                    variant="outlined"
-                    InputProps={{ sx: inputEffect }}
-                  />
-                </Grid>
-              </>
-            )}
-            <Grid item xs={12}>
-              <TextField
-                label="Email Address"
-                name="email"
-                type="email"
-                value={email}
-                onChange={handleChange}
-                required
-                fullWidth
-                variant="outlined"
-                InputProps={{ sx: inputEffect }}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                label="Password"
-                name="password"
-                type="password"
-                value={password}
-                onChange={handleChange}
-                required
-                fullWidth
-                variant="outlined"
-                InputProps={{ sx: inputEffect }}
-              />
-            </Grid>
-            {signUp && (
-              <Grid item xs={12}>
-                <TextField
-                  label="Confirm Password"
-                  name="confirmPassword"
-                  type="password"
-                  value={confirmPassword}
-                  onChange={handleChange}
-                  required
-                  fullWidth
-                  variant="outlined"
-                  InputProps={{ sx: inputEffect }}
-                />
-              </Grid>
-            )}
-            <Grid item xs={12}>
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.97 }}
-              >
-                <Button
-                  type="submit"
-                  variant="contained"
-                  fullWidth
-                  sx={{
-                    py: 1.5,
-                    fontWeight: "bold",
-                    borderRadius: 99,
-                    textTransform: "none",
-                    background: "linear-gradient(45deg, #2196f3, #21cbf3)",
-                    boxShadow: "0 8px 20px rgba(33, 203, 243, 0.25)",
-                  }}
-                >
-                  {signUp ? "Sign Up" : "Sign In"}
-                </Button>
-              </motion.div>
-            </Grid>
-          </Grid>
-        </form>
+          <AuthForm
+            signUp={signUp}
+            toggleMode={toggleMode}
+            showSnackbar={showSnackbar}
+          />
 
-        <Typography
-          variant="body2"
-          align="center"
-          sx={{ mt: 3, cursor: "pointer", color: "primary.main" }}
-          onClick={() => setSignUp(!signUp)}
-        >
-          {signUp
-            ? "Already have an account? Sign In"
-            : "Don't have an account? Sign Up"}
-        </Typography>
-      </MotionPaper>
+          <Divider
+            sx={{
+              my: 3,
+              borderColor: isDark
+                ? "rgba(255,255,255,0.08)"
+                : "rgba(0,0,0,0.08)",
+            }}
+          >
+            or
+          </Divider>
 
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={4000}
-        onClose={() => setSnackbar({ ...snackbar, open: false })}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-      >
-        <Alert
-          onClose={() => setSnackbar({ ...snackbar, open: false })}
-          severity={snackbar.severity}
-          sx={{ width: "100%" }}
+          <Box>
+            <GoogleLoginButton showSnackbar={showSnackbar} />
+          </Box>
+        </MotionPaper>
+
+        <Snackbar
+          open={snackbar.open}
+          autoHideDuration={4000}
+          onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
         >
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
-    </Container>
+          <Alert severity={snackbar.severity} variant="filled">
+            {snackbar.message}
+          </Alert>
+        </Snackbar>
+      </Container>
+    </CommonBackground>
   );
 };
 

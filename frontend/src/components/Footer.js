@@ -19,7 +19,6 @@ export default function Footer() {
     <Box
       component="footer"
       sx={{
-        mt: 10,
         pt: 6,
         pb: 4,
         px: 2,

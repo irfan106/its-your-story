@@ -60,7 +60,12 @@ const AppWithApollo = () => {
 
   return (
     <ApolloProvider client={client}>
-      <BrowserRouter>
+      <BrowserRouter
+        future={{
+          v7_startTransition: true,
+          v7_relativeSplatPath: true,
+        }}
+      >
         <ThemeContextProvider>
           <AppContextProvider>
             <App />
