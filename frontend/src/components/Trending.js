@@ -147,21 +147,26 @@ const Trending = ({ blogs }) => {
                   borderRadius: 4,
                   overflow: "hidden",
                   transition: "box-shadow 0.4s ease, transform 0.3s ease",
-                  backdropFilter: "blur(14px)",
-                  WebkitBackdropFilter: "blur(14px)",
                   backgroundColor:
                     theme.palette.mode === "dark"
-                      ? "rgba(255, 255, 255, 0.05)"
-                      : "rgba(255, 255, 255, 0.4)",
+                      ? "rgba(18, 18, 18, 0.25)"
+                      : "rgba(255, 255, 255, 0.3)",
+                  backdropFilter: "blur(30px)",
+                  WebkitBackdropFilter: "blur(30px)",
+                  border:
+                    theme.palette.mode === "dark"
+                      ? "1px solid rgba(255, 255, 255, 0.08)"
+                      : "1px solid rgba(0, 0, 0, 0.05)",
                   boxShadow:
                     theme.palette.mode === "dark"
-                      ? "0 0 12px rgba(255, 255, 255, 0.05)"
-                      : "0 2px 8px rgba(0, 0, 0, 0.08)",
+                      ? "0 4px 24px rgba(255, 255, 255, 0.05)"
+                      : "0 4px 16px rgba(0, 0, 0, 0.08)",
                   "&:hover": {
+                    transform: "scale(1.02)",
                     boxShadow:
                       theme.palette.mode === "dark"
-                        ? "0 0 20px rgba(255, 255, 255, 0.15)"
-                        : "0 6px 18px rgba(0, 0, 0, 0.15)",
+                        ? "0 6px 30px rgba(255, 255, 255, 0.1)"
+                        : "0 6px 20px rgba(0, 0, 0, 0.12)",
                   },
                 }}
               >
@@ -193,10 +198,13 @@ const Trending = ({ blogs }) => {
                         position: "absolute",
                         bottom: 0,
                         width: "100%",
-                        backdropFilter: "blur(10px)",
-                        WebkitBackdropFilter: "blur(10px)",
-                        backgroundColor: "rgba(0,0,0,0.45)",
-                        color: "white",
+                        backdropFilter: "blur(15px)",
+                        WebkitBackdropFilter: "blur(15px)",
+                        backgroundColor:
+                          theme.palette.mode === "dark"
+                            ? "rgba(0, 0, 0, 0.45)"
+                            : "rgba(255, 255, 255, 0.35)",
+                        color: theme.palette.mode === "dark" ? "#fff" : "#111",
                         px: 2,
                         py: 1.5,
                         display: "flex",
@@ -210,7 +218,8 @@ const Trending = ({ blogs }) => {
                         sx={{
                           fontWeight: 600,
                           fontSize: "1rem",
-                          color: "#fff",
+                          color:
+                            theme.palette.mode === "dark" ? "#fff" : "#111",
                           lineHeight: 1.3,
                         }}
                       >

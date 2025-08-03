@@ -5,6 +5,8 @@ import {
   CardContent,
   Typography,
   useTheme,
+  Box,
+  Link as MuiLink,
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import { excerpt } from "../utility";
@@ -17,28 +19,29 @@ const BlogCard = ({ blog }) => {
   return (
     <Card
       sx={{
-        height: "100%",
+        height: "90%",
+        width: "95%",
         display: "flex",
         flexDirection: "column",
         borderRadius: 5,
         overflow: "hidden",
-        background: isDark
-          ? "linear-gradient(135deg, rgba(30,30,30,0.85), rgba(50,50,50,0.85))"
-          : "linear-gradient(135deg, rgba(255,255,255,0.85), rgba(240,240,240,0.85))",
-        backdropFilter: "blur(18px)",
-        WebkitBackdropFilter: "blur(18px)",
+        backgroundColor: isDark
+          ? "rgba(18, 18, 18, 0.3)"
+          : "rgba(255, 255, 255, 0.25)",
+        backdropFilter: "blur(30px)",
+        WebkitBackdropFilter: "blur(30px)",
         border: isDark
           ? "1px solid rgba(255, 255, 255, 0.08)"
-          : "1px solid rgba(0, 0, 0, 0.08)",
+          : "1px solid rgba(0, 0, 0, 0.05)",
         boxShadow: isDark
-          ? "0 4px 20px rgba(255, 255, 255, 0.04)"
-          : "0 8px 30px rgba(0, 0, 0, 0.1)",
-        transition: "all 0.3s ease",
+          ? "0 8px 32px rgba(0,0,0,0.25)"
+          : "0 8px 32px rgba(0,0,0,0.1)",
+        transition: "transform 0.3s ease, box-shadow 0.3s ease",
         "&:hover": {
           transform: "translateY(-5px)",
           boxShadow: isDark
-            ? "0 6px 30px rgba(255, 255, 255, 0.1)"
-            : "0 12px 36px rgba(0, 0, 0, 0.15)",
+            ? "0 12px 40px rgba(255, 255, 255, 0.05)"
+            : "0 12px 40px rgba(0, 0, 0, 0.15)",
         },
       }}
     >
@@ -49,20 +52,11 @@ const BlogCard = ({ blog }) => {
           backgroundImage: `url(${blog.imgUrl || getRandomDefaultImg()})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
         }}
       />
 
-      <CardContent
-        sx={{
-          flex: 1,
-          backdropFilter: "blur(10px)",
-          WebkitBackdropFilter: "blur(10px)",
-          backgroundColor: isDark
-            ? "rgba(255, 255, 255, 0.03)"
-            : "rgba(255, 255, 255, 0.5)",
-          borderTop: "1px solid rgba(255,255,255,0.2)",
-        }}
-      >
+      <CardContent sx={{ flex: 1, p: 3 }}>
         <Typography
           variant="overline"
           color={isDark ? "grey.400" : "text.secondary"}
@@ -70,27 +64,46 @@ const BlogCard = ({ blog }) => {
           {blog.category}
         </Typography>
 
-        <Typography variant="h6" sx={{ mt: 1, mb: 1 }}>
+        <Typography
+          variant="h6"
+          sx={{
+            mt: 1,
+            mb: 1,
+            fontWeight: 600,
+            color: isDark ? "#fff" : "#1f2937",
+          }}
+        >
           {excerpt(blog.title, 30)}
         </Typography>
 
         <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
-          {excerpt(blog.description, 90)}
-          <Link
+          <strong>{blog.author}</strong> —{" "}
+          {new Date(blog.timestamp).toLocaleDateString(undefined, {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+          })}
+        </Typography>
+
+        <Typography variant="body2">
+          {excerpt(blog.description, 80)}{" "}
+          <MuiLink
+            component={Link}
             to={`/detail/${blog.id}`}
-            style={{
+            underline="hover"
+            sx={{
               fontWeight: 500,
               fontSize: "0.85rem",
               color: isDark ? "#90caf9" : "#1976d2",
-              textDecoration: "none",
+              ml: 0.5,
+              "&:hover": {
+                textDecoration: "underline",
+                color: isDark ? "#c3dcfa" : "#2563eb",
+              },
             }}
-            onMouseOver={(e) =>
-              (e.currentTarget.style.textDecoration = "underline")
-            }
-            onMouseOut={(e) => (e.currentTarget.style.textDecoration = "none")}
           >
             Read More
-          </Link>
+          </MuiLink>
         </Typography>
       </CardContent>
     </Card>

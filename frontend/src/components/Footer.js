@@ -23,10 +23,10 @@ export default function Footer() {
         pb: 4,
         px: 2,
         background: isDark
-          ? "linear-gradient(135deg, #0e0e0e, #1a1a1a)"
-          : "linear-gradient(135deg, #fafafa, #e5e5e5)",
-        color: isDark ? "#e0e0e0" : "#1a1a1a",
-        borderTop: `1px solid ${isDark ? "#2a2a2a" : "#d4d4d4"}`,
+          ? "linear-gradient(135deg, #0f0f0f, #1a1a1a)" // pure blackish gradient
+          : "linear-gradient(135deg, #f1f5f9, #e2e8f0)", // soft bluish for light
+        color: isDark ? "#e5e5e5" : "#1e293b",
+        borderTop: `1px solid ${isDark ? "#2a2a2a" : "#cbd5e1"}`,
       }}
     >
       <Container maxWidth="lg">
@@ -39,7 +39,7 @@ export default function Footer() {
             <Typography
               variant="body2"
               sx={{
-                color: isDark ? "#a3a3a3" : "#4b4b4b",
+                color: isDark ? "#a3a3a3" : "#475569",
                 lineHeight: 1.7,
               }}
             >
@@ -61,10 +61,11 @@ export default function Footer() {
                   underline="none"
                   sx={{
                     fontSize: "0.95rem",
-                    color: isDark ? "#d4d4d4" : "#2a2a2a",
+                    fontWeight: 500,
+                    color: isDark ? "#d4d4d4" : "#1e40af", // blue in light only
                     transition: "all 0.3s ease",
                     "&:hover": {
-                      color: isDark ? "#ffffff" : "#000000",
+                      color: isDark ? "#ffffff" : "#1d4ed8",
                       pl: 0.5,
                     },
                   }}
@@ -83,22 +84,22 @@ export default function Footer() {
             <Stack spacing={1}>
               <Box display="flex" alignItems="center" gap={1}>
                 <EmailIcon
-                  sx={{ fontSize: 20, color: isDark ? "#9ca3af" : "#525252" }}
+                  sx={{ fontSize: 20, color: isDark ? "#d1d5db" : "#1e40af" }}
                 />
                 <Typography
                   variant="body2"
-                  sx={{ color: isDark ? "#a3a3a3" : "#4b4b4b" }}
+                  sx={{ color: isDark ? "#a3a3a3" : "#475569" }}
                 >
                   info@yourstory.com
                 </Typography>
               </Box>
               <Box display="flex" alignItems="center" gap={1}>
                 <LocationOnIcon
-                  sx={{ fontSize: 20, color: isDark ? "#9ca3af" : "#525252" }}
+                  sx={{ fontSize: 20, color: isDark ? "#d1d5db" : "#1e40af" }}
                 />
                 <Typography
                   variant="body2"
-                  sx={{ color: isDark ? "#a3a3a3" : "#4b4b4b" }}
+                  sx={{ color: isDark ? "#a3a3a3" : "#475569" }}
                 >
                   Worldwide 🌍
                 </Typography>
@@ -111,7 +112,7 @@ export default function Footer() {
         <Box mt={6} textAlign="center">
           <Typography
             variant="caption"
-            sx={{ color: isDark ? "#7d7d7d" : "#6b6b6b" }}
+            sx={{ color: isDark ? "#6b7280" : "#64748b" }}
           >
             © {new Date().getFullYear()} Tell Your Story. All rights reserved.
           </Typography>

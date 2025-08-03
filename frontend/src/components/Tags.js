@@ -27,16 +27,20 @@ const Tags = ({ tags }) => {
           display: "flex",
           flexWrap: "wrap",
           gap: 1,
-          p: 1.5,
+          p: 2,
           borderRadius: 3,
-          backdropFilter: "blur(8px)",
-          WebkitBackdropFilter: "blur(8px)",
           backgroundColor: isDark
-            ? "rgba(255, 255, 255, 0.04)"
-            : "rgba(240, 240, 240, 0.5)",
+            ? "rgba(255, 255, 255, 0.02)"
+            : "rgba(255, 255, 255, 0.2)",
+          backdropFilter: "blur(16px)",
+          WebkitBackdropFilter: "blur(16px)",
           border: isDark
-            ? "1px solid rgba(255, 255, 255, 0.1)"
+            ? "1px solid rgba(255, 255, 255, 0.08)"
             : "1px solid rgba(0, 0, 0, 0.05)",
+          boxShadow: isDark
+            ? "0 4px 12px rgba(255,255,255,0.03)"
+            : "0 4px 12px rgba(0,0,0,0.08)",
+          transition: "all 0.3s ease",
         }}
       >
         {tags?.map((tag, index) => (
@@ -51,18 +55,18 @@ const Tags = ({ tags }) => {
               px: 1,
               cursor: "pointer",
               backgroundColor: isDark
-                ? "rgba(255, 255, 255, 0.1)"
-                : "rgba(255, 255, 255, 0.4)",
+                ? "rgba(255, 255, 255, 0.08)"
+                : "rgba(255, 255, 255, 0.25)",
               color: isDark ? "#fff" : "#1f2937",
-              backdropFilter: "blur(4px)",
-              WebkitBackdropFilter: "blur(4px)",
+              backdropFilter: "blur(6px)",
+              WebkitBackdropFilter: "blur(6px)",
               boxShadow: isDark
                 ? "0 1px 3px rgba(255,255,255,0.05)"
                 : "0 1px 3px rgba(0,0,0,0.08)",
               transition: "all 0.3s ease",
               "&:hover": {
                 backgroundColor: isDark
-                  ? "rgba(255, 255, 255, 0.2)"
+                  ? "rgba(255, 255, 255, 0.18)"
                   : "rgba(255, 255, 255, 0.85)",
                 color: isDark ? "#fff" : "#111827",
                 boxShadow: isDark

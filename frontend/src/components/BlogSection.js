@@ -42,23 +42,23 @@ const BlogSection = ({ blogs }) => {
             display: "flex",
             flexDirection: { xs: "column", md: "row" },
             overflow: "hidden",
-            background: isDark
-              ? "linear-gradient(135deg, rgba(30,30,30,0.85), rgba(50,50,50,0.85))"
-              : "linear-gradient(135deg, rgba(255,255,255,0.85), rgba(240,240,240,0.85))",
-            backdropFilter: "blur(20px)",
-            WebkitBackdropFilter: "blur(20px)",
+            backgroundColor: isDark
+              ? "rgba(18, 18, 18, 0.3)"
+              : "rgba(255, 255, 255, 0.25)",
+            backdropFilter: "blur(30px)",
+            WebkitBackdropFilter: "blur(30px)",
             border: isDark
-              ? "1px solid rgba(255, 255, 255, 0.1)"
+              ? "1px solid rgba(255, 255, 255, 0.08)"
               : "1px solid rgba(0, 0, 0, 0.05)",
             boxShadow: isDark
-              ? "0 0 30px rgba(255, 255, 255, 0.05)"
-              : "0 10px 30px rgba(0, 0, 0, 0.1)",
+              ? "0 8px 32px rgba(0,0,0,0.25)"
+              : "0 8px 32px rgba(0,0,0,0.1)",
             transition: "transform 0.3s ease, box-shadow 0.3s ease",
             "&:hover": {
-              transform: "scale(1.015)",
+              transform: "scale(1.02)",
               boxShadow: isDark
-                ? "0 0 40px rgba(255, 255, 255, 0.1)"
-                : "0 15px 35px rgba(0, 0, 0, 0.15)",
+                ? "0 12px 40px rgba(255, 255, 255, 0.05)"
+                : "0 12px 40px rgba(0, 0, 0, 0.15)",
             },
           }}
         >
