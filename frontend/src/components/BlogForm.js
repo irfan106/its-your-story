@@ -168,7 +168,7 @@ const BlogForm = ({
 
             <Grid item xs={12}>
               <Typography variant="subtitle1" gutterBottom>
-                Content
+                Content *
               </Typography>
 
               <Box
@@ -229,7 +229,7 @@ const BlogForm = ({
             </Grid>
             <Grid item xs={12}>
               <Typography variant="subtitle1" gutterBottom>
-                Upload Blog Image
+                Upload Blog Image (Required)
               </Typography>
               <GlassButton variant="outlined" component="label" sx={{ mb: 2 }}>
                 Choose File
