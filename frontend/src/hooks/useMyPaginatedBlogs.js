@@ -1,6 +1,6 @@
 import { useQuery, gql } from "@apollo/client";
 
-const GET_MY_BLOGS_BY_PAGE = gql`
+export const GET_MY_BLOGS_BY_PAGE = gql`
   query MyBlogsByPage($page: Int, $pageSize: Int) {
     myBlogsByPage(page: $page, pageSize: $pageSize) {
       blogs {

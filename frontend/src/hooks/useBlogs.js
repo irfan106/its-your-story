@@ -1,6 +1,6 @@
 import { useQuery, gql } from "@apollo/client";
 
-const GET_BLOGS = gql`
+export const GET_BLOGS = gql`
   query GetBlogs($limit: Int, $page: Int, $latestOnly: Boolean) {
     blogs(limit: $limit, page: $page, latestOnly: $latestOnly) {
       id

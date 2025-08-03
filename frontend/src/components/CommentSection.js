@@ -17,6 +17,7 @@ import {
   List,
   ListItem,
 } from "@mui/material";
+import GlassButton from "./GlassButton/GlassButton";
 
 const CommentSection = ({ blogId, user }) => {
   const [comments, setComments] = useState([]);
@@ -67,14 +68,14 @@ const CommentSection = ({ blogId, user }) => {
             multiline
             minRows={2}
           />
-          <Button
+          <GlassButton
             type="submit"
             variant="contained"
             sx={{ mt: 1 }}
             disabled={!newComment.trim()}
           >
             Post Comment
-          </Button>
+          </GlassButton>
         </Box>
       ) : (
         <Typography variant="body2">Login to leave a comment.</Typography>

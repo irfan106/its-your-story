@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Button } from "@mui/material";
 import { toggleFollow, isFollowing } from "../services/followService";
 import { useAppContext } from "../context/AppContext";
+import GlassButton from "./GlassButton/GlassButton";
 
 const FollowButton = ({ targetUserId }) => {
   const { user } = useAppContext();
@@ -21,13 +21,13 @@ const FollowButton = ({ targetUserId }) => {
   if (!user || user.uid === targetUserId) return null; // Hide for own profile
 
   return (
-    <Button
+    <GlassButton
       onClick={handleFollow}
       variant={following ? "outlined" : "contained"}
-      color={following ? "secondary" : "primary"}
+      size="small"
     >
       {following ? "Unfollow" : "Follow"}
-    </Button>
+    </GlassButton>
   );
 };
 

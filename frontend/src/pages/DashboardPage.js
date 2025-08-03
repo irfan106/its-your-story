@@ -18,6 +18,7 @@ import Spinner from "../components/Spinner";
 import BlogCard from "../components/BlogCard";
 import { motion } from "framer-motion";
 import CommonBackground from "../components/CommonBackground";
+import GlassButton from "../components/GlassButton/GlassButton";
 
 const DashboardPage = () => {
   const { user } = useAppContext();
@@ -40,19 +41,14 @@ const DashboardPage = () => {
 
   return (
     <CommonBackground>
-      <Box sx={{ p: 4, minHeight: "100vh" }}>
-        <Paper
-          elevation={3}
+      <Box sx={{ px: 3, py: 8 }}>
+        {/* Profile Section */}
+        <Box
           sx={{
-            p: 4,
-            mb: 4,
-            maxWidth: 600,
+            maxWidth: 700,
             mx: "auto",
-            borderRadius: 4,
             textAlign: "center",
-            background: isDark
-              ? "linear-gradient(135deg, rgba(30,30,30,0.85), rgba(50,50,50,0.85))"
-              : "linear-gradient(135deg, rgba(255,255,255,0.85), rgba(240,240,240,0.85))",
+            mb: 6,
           }}
         >
           <Avatar
@@ -61,34 +57,51 @@ const DashboardPage = () => {
               "https://cdn-icons-png.flaticon.com/512/149/149071.png"
             }
             alt={profile.displayName}
-            sx={{ width: 100, height: 100, mx: "auto", mb: 2 }}
+            sx={{
+              width: 120,
+              height: 120,
+              mx: "auto",
+              mb: 2,
+              border: "3px solid #fff",
+              boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+            }}
           />
-          <Typography variant="h5" fontWeight={600}>
+          <Typography variant="h5" fontWeight={700}>
             {profile.displayName || "No Name"}
           </Typography>
-          <Typography variant="body1" color="text.secondary">
+          <Typography variant="body1" color="text.secondary" mb={2}>
             {profile.email}
           </Typography>
 
-          <Stack direction="row" justifyContent="center" spacing={4} mt={2}>
+          <Stack
+            direction="row"
+            justifyContent="center"
+            spacing={6}
+            sx={{ mt: 2 }}
+          >
             <Box>
               <Typography variant="h6" fontWeight="bold">
                 {profile.followers ?? 0}
               </Typography>
-              <Typography variant="caption">Followers</Typography>
+              <Typography variant="caption" color="text.secondary">
+                Followers
+              </Typography>
             </Box>
             <Box>
               <Typography variant="h6" fontWeight="bold">
                 {profile.following ?? 0}
               </Typography>
-              <Typography variant="caption">Following</Typography>
+              <Typography variant="caption" color="text.secondary">
+                Following
+              </Typography>
             </Box>
           </Stack>
-        </Paper>
+        </Box>
 
-        <Divider sx={{ my: 4 }} />
+        <Divider sx={{ mb: 6 }} />
 
-        <Box sx={{ py: 6, px: { xs: 2, md: 10 } }}>
+        {/* Recent Stories */}
+        <Box sx={{ px: { xs: 1, md: 6 } }}>
           <Typography
             variant="h4"
             align="center"
@@ -109,14 +122,14 @@ const DashboardPage = () => {
             <Stack
               alignItems="center"
               justifyContent="center"
-              height="40vh"
+              height="30vh"
               sx={{ mt: 4 }}
             >
               <Spinner />
             </Stack>
           ) : blogs.length === 0 ? (
-            <Typography align="center">
-              You haven't posted any stories yet.
+            <Typography align="center" color="text.secondary">
+              You haven’t posted any stories yet.
             </Typography>
           ) : (
             <Grid container spacing={3} justifyContent="center">
@@ -128,25 +141,15 @@ const DashboardPage = () => {
             </Grid>
           )}
 
-          <Box mt={4} display="flex" justifyContent="center">
+          <Box mt={6} display="flex" justifyContent="center">
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }}>
-              <Button
-                type="submit"
-                variant="contained"
-                fullWidth
+              <GlassButton
                 component={Link}
                 to="/my-stories"
-                sx={{
-                  py: 1.5,
-                  fontWeight: "bold",
-                  borderRadius: 99,
-                  textTransform: "none",
-                  background: "linear-gradient(45deg, #2196f3, #21cbf3)",
-                  boxShadow: "0 8px 20px rgba(33, 203, 243, 0.25)",
-                }}
+                variant="contained"
               >
-                {"View More Stories"}
-              </Button>
+                View More Stories
+              </GlassButton>
             </motion.div>
           </Box>
         </Box>

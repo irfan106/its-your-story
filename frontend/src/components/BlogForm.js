@@ -1,7 +1,6 @@
 import React from "react";
 import {
   Box,
-  Button,
   Container,
   Grid,
   MenuItem,
@@ -16,6 +15,7 @@ import { motion } from "framer-motion";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { toast } from "react-toastify";
+import GlassButton from "./GlassButton/GlassButton";
 
 const MotionPaper = motion(Paper);
 
@@ -112,15 +112,8 @@ const BlogForm = ({
                 variant="outlined"
                 required
                 InputProps={{ sx: inputEffect }}
-                sx={{
-                  bgcolor: isDark
-                    ? "rgba(255,255,255,0.05)"
-                    : "rgba(0,0,0,0.03)",
-                  borderRadius: 1,
-                }}
               />
             </Grid>
-
             <Grid item xs={12}>
               <TextField
                 fullWidth
@@ -129,16 +122,10 @@ const BlogForm = ({
                 value={form.subtitle}
                 onChange={handleChange}
                 variant="outlined"
+                required
                 InputProps={{ sx: inputEffect }}
-                sx={{
-                  bgcolor: isDark
-                    ? "rgba(255,255,255,0.05)"
-                    : "rgba(0,0,0,0.03)",
-                  borderRadius: 1,
-                }}
               />
             </Grid>
-
             <Grid item xs={12}>
               <Select
                 fullWidth
@@ -147,15 +134,6 @@ const BlogForm = ({
                 name="category"
                 displayEmpty
                 required
-                sx={{
-                  bgcolor: isDark
-                    ? "rgba(255,255,255,0.05)"
-                    : "rgba(0,0,0,0.03)",
-                  borderRadius: 1,
-                  "& .MuiSelect-select": { py: 1.5 },
-                  "& fieldset": { border: "none" },
-                  ...inputEffect,
-                }}
               >
                 <MenuItem value="" disabled>
                   Select a Category
@@ -167,7 +145,6 @@ const BlogForm = ({
                 ))}
               </Select>
             </Grid>
-
             <Grid item xs={12}>
               <TextField
                 fullWidth
@@ -175,12 +152,6 @@ const BlogForm = ({
                 variant="outlined"
                 onKeyDown={handleTagKeyDown}
                 InputProps={{ sx: inputEffect }}
-                sx={{
-                  bgcolor: isDark
-                    ? "rgba(255,255,255,0.05)"
-                    : "rgba(0,0,0,0.03)",
-                  borderRadius: 1,
-                }}
               />
               <Box sx={{ mt: 1 }}>
                 {form.tags.map((tag) => (
@@ -199,23 +170,68 @@ const BlogForm = ({
               <Typography variant="subtitle1" gutterBottom>
                 Content
               </Typography>
-              <ReactQuill
-                value={form.description}
-                onChange={handleQuillChange}
-                theme="snow"
-                style={{
-                  background: isDark ? "#1e1e1e" : "#fff",
-                  color: isDark ? "#eee" : "#111",
-                  borderRadius: 8,
-                }}
-              />
-            </Grid>
 
+              <Box
+                sx={{
+                  border: `1px solid ${isDark ? "#444" : "#ccc"}`,
+                  borderRadius: 2,
+                  overflow: "hidden",
+                  transition: "border-color 0.3s ease, box-shadow 0.3s ease",
+                  "&:hover": {
+                    borderColor: isDark ? "#666" : "#999",
+                    boxShadow: isDark
+                      ? "0 0 0 2px rgba(255,255,255,0.1)"
+                      : "0 0 0 2px rgba(0,0,0,0.05)",
+                  },
+
+                  // Quill toolbar styles
+                  "& .ql-toolbar": {
+                    border: "none",
+                    backgroundColor: isDark ? "#2a2a2a" : "#f3f3f3",
+                    borderBottom: `1px solid ${isDark ? "#555" : "#ddd"}`,
+                    button: {
+                      color: isDark ? "#ccc" : "#333",
+                      transition: "all 0.2s ease",
+                      "&:hover": {
+                        color: isDark ? "#fff" : "#000",
+                        backgroundColor: isDark ? "#333" : "#e0e0e0",
+                      },
+                      "&.ql-active": {
+                        color: isDark ? "#66ccff" : "#0055aa",
+                        backgroundColor: isDark ? "#1f2a3a" : "#d6e9ff",
+                      },
+                    },
+                  },
+
+                  "& .ql-container": {
+                    border: "none",
+                    backgroundColor: isDark ? "#1e1e1e" : "#fff",
+                    borderRadius: 0,
+                  },
+                  "& .ql-editor": {
+                    minHeight: "200px",
+                    maxHeight: "300px",
+                    padding: "12px",
+                    fontSize: "1rem",
+                    color: isDark ? "#eee" : "#111",
+                  },
+                  "& .ql-editor:focus": {
+                    outline: "none",
+                  },
+                }}
+              >
+                <ReactQuill
+                  value={form.description}
+                  onChange={handleQuillChange}
+                  theme="snow"
+                />
+              </Box>
+            </Grid>
             <Grid item xs={12}>
               <Typography variant="subtitle1" gutterBottom>
                 Upload Blog Image
               </Typography>
-              <Button variant="outlined" component="label" sx={{ mb: 2 }}>
+              <GlassButton variant="outlined" component="label" sx={{ mb: 2 }}>
                 Choose File
                 <input
                   type="file"
@@ -234,11 +250,15 @@ const BlogForm = ({
                     }
                   }}
                 />
-              </Button>
+              </GlassButton>
               {imagePreview && (
                 <Box
                   component="img"
-                  src={URL.createObjectURL(imagePreview)}
+                  src={
+                    typeof imagePreview === "string"
+                      ? imagePreview
+                      : URL.createObjectURL(imagePreview)
+                  }
                   alt="Preview"
                   sx={{
                     width: "100%",
@@ -249,16 +269,10 @@ const BlogForm = ({
                 />
               )}
             </Grid>
-
             <Grid item xs={12} textAlign="right">
-              <Button
-                type="submit"
-                variant="contained"
-                size="large"
-                sx={{ mt: 3, px: 4 }}
-              >
+              <GlassButton type="submit" variant="contained" size="large">
                 {editing ? "Update Blog" : "Create Blog"}
-              </Button>
+              </GlassButton>
             </Grid>
           </Grid>
         </Box>

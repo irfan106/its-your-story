@@ -43,7 +43,7 @@ const LikeButton = ({ blogId, user }) => {
   };
 
   return (
-    <Box display="flex" alignItems="center" gap={1} mt={2}>
+    <Box display="flex" alignItems="center" gap={1}>
       <Tooltip title={liked ? "Unlike" : "Like"}>
         <IconButton onClick={handleLike} color="error">
           {liked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
