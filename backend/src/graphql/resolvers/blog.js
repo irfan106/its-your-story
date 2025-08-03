@@ -55,8 +55,21 @@ const blogResolvers = {
 
     blogTags: async () => {
       const snapshot = await db.collection("blogs").get();
-      const allTags = snapshot.docs.flatMap((doc) => doc.data().tags || []);
-      return [...new Set(allTags)];
+      const tagCount = {};
+
+      snapshot.docs.forEach((doc) => {
+        const tags = doc.data().tags || [];
+        tags.forEach((tag) => {
+          tagCount[tag] = (tagCount[tag] || 0) + 1;
+        });
+      });
+
+      const sortedTags = Object.entries(tagCount)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 15)
+        .map(([tag]) => tag);
+
+      return sortedTags;
     },
 
     blogsByPage: async (_, { page = 1, pageSize = 6 }) => {
