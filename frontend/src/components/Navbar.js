@@ -82,10 +82,7 @@ const Navbar = () => {
       elevation={4}
       sx={{
         backdropFilter: "blur(12px)",
-        backgroundColor:
-          theme.palette.mode === "dark"
-            ? "rgba(18,18,18,0.8)"
-            : "rgba(255,255,255,0.6)",
+        backgroundColor: "transparent",
         borderBottom: `1px solid ${
           theme.palette.mode === "dark" ? "#333" : "#ddd"
         }`,
