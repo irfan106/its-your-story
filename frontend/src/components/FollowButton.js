@@ -6,6 +6,8 @@ import GlassButton from "./GlassButton/GlassButton";
 const FollowButton = ({ targetUserId }) => {
   const { user } = useAppContext();
   const [following, setFollowing] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [dots, setDots] = useState("");
 
   useEffect(() => {
     if (user?.uid && targetUserId) {
@@ -13,9 +15,28 @@ const FollowButton = ({ targetUserId }) => {
     }
   }, [user?.uid, targetUserId]);
 
+  // Animate dots for "Please wait"
+  useEffect(() => {
+    if (!loading) {
+      setDots("");
+      return;
+    }
+    const interval = setInterval(() => {
+      setDots((prev) => (prev.length >= 3 ? "" : prev + "."));
+    }, 500);
+    return () => clearInterval(interval);
+  }, [loading]);
+
   const handleFollow = async () => {
-    const result = await toggleFollow(user.uid, targetUserId);
-    setFollowing(result);
+    if (loading) return;
+    setLoading(true);
+    try {
+      const result = await toggleFollow(user.uid, targetUserId);
+      setFollowing(result);
+    } catch (error) {
+      console.error("Error toggling follow:", error);
+    }
+    setLoading(false);
   };
 
   if (!user || user.uid === targetUserId) return null; // Hide for own profile
@@ -25,8 +46,10 @@ const FollowButton = ({ targetUserId }) => {
       onClick={handleFollow}
       variant={following ? "outlined" : "contained"}
       size="small"
+      disabled={loading}
+      sx={{ minWidth: 90, cursor: loading ? "default" : "pointer" }}
     >
-      {following ? "Unfollow" : "Follow"}
+      {loading ? `Please wait${dots}` : following ? "Unfollow" : "Follow"}
     </GlassButton>
   );
 };

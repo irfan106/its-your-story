@@ -150,9 +150,7 @@ const BlogDetails = () => {
         <Box sx={{ flex: 3 }}>
           <Box
             sx={{
-              backgroundColor: isDark
-                ? "rgba(255,255,255,0.05)"
-                : "rgba(255,255,255,0.45)",
+              backgroundColor: "transparent",
               borderRadius: 5,
               backdropFilter: "blur(16px)",
               WebkitBackdropFilter: "blur(16px)",
@@ -226,7 +224,14 @@ const BlogDetails = () => {
 
             <Typography
               variant="body1"
-              sx={{ whiteSpace: "pre-line" }}
+              sx={{
+                whiteSpace: "pre-line",
+                lineHeight: 1.7,
+                fontSize: "1.1rem",
+                color: isDark ? "#ddd" : "#333",
+                maxWidth: "100%",
+                mb: 3,
+              }}
               dangerouslySetInnerHTML={{ __html: blog?.description }}
             />
           </Box>
