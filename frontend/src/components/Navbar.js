@@ -15,6 +15,7 @@ import {
   useMediaQuery,
   useTheme,
   Tooltip,
+  Divider,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
@@ -62,19 +63,36 @@ const Navbar = () => {
     { label: "Contact", path: "/contact", key: "contact" },
   ];
 
+  const gradientTextStyle = (theme) => {
+    const isDark = theme.palette.mode === "dark";
+    const gradient = isDark
+      ? "linear-gradient(135deg, #6366f1, #8b5cf6)"
+      : "linear-gradient(135deg, #3b82f6, #06b6d4)";
+
+    return {
+      background: gradient,
+      WebkitBackgroundClip: "text",
+      WebkitTextFillColor: "transparent",
+      backgroundClip: "text",
+      textFillColor: "transparent",
+    };
+  };
+
   const renderNavButtons = () =>
-    navItems.map((item) => (
-      <NavButton
-        key={item.key}
-        component={Link}
-        to={item.path}
-        onClick={() => setActive(item.key)}
-        active={active === item.key ? 1 : 0}
-        disableRipple
-      >
-        {item.label}
-      </NavButton>
-    ));
+    navItems.map((item) => {
+      return (
+        <NavButton
+          key={item.key}
+          component={Link}
+          to={item.path}
+          onClick={() => setActive(item.key)}
+          disableRipple
+          active={active === item.key ? 1 : 0}
+        >
+          {item.label}
+        </NavButton>
+      );
+    });
 
   return (
     <AppBar
@@ -129,13 +147,34 @@ const Navbar = () => {
               mode === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"
             }
           >
-            <IconButton onClick={toggleTheme}>
+            <IconButton
+              onClick={toggleTheme}
+              sx={{
+                bgcolor: "transparent",
+                transition: "all 0.3s ease",
+                "& svg": {
+                  background:
+                    mode === "dark"
+                      ? "linear-gradient(135deg, #6366f1, #8b5cf6)"
+                      : "linear-gradient(135deg, #3b82f6, #06b6d4)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text",
+                  textFillColor: "transparent",
+                  transition: "all 0.3s ease",
+                },
+                "&:hover": {
+                  bgcolor: theme.palette.primary.main + "15",
+                  "& svg": {
+                    filter: "brightness(1.2)",
+                  },
+                },
+              }}
+            >
               {mode === "dark" ? (
-                <LightModeOutlinedIcon
-                  sx={{ color: theme.palette.warning.main }}
-                />
+                <LightModeOutlinedIcon />
               ) : (
-                <DarkModeOutlinedIcon sx={{ color: theme.palette.grey[800] }} />
+                <DarkModeOutlinedIcon />
               )}
             </IconButton>
           </Tooltip>
@@ -179,6 +218,7 @@ const Navbar = () => {
                     }}
                   />
                 </Tooltip>
+
                 <Typography
                   variant="body2"
                   noWrap
@@ -186,21 +226,71 @@ const Navbar = () => {
                     maxWidth: 120,
                     fontWeight: 600,
                     fontSize: "0.95rem",
-                    color: "text.primary",
                     letterSpacing: 0.2,
+                    ...gradientTextStyle(theme), // Apply gradient here!
                   }}
                 >
                   {user.displayName}
                 </Typography>
               </Box>
 
+              {/* Dropdown Menu */}
               <Menu
                 anchorEl={anchorEl}
                 open={open}
                 onClose={handleMenuClose}
                 anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
                 transformOrigin={{ vertical: "top", horizontal: "right" }}
+                PaperProps={{
+                  sx: {
+                    borderRadius: 2,
+                    minWidth: 170,
+                    bgcolor: "transparent",
+                    p: 0,
+                    backdropFilter: "blur(10px)",
+                  },
+                }}
               >
+                {/* Profile header */}
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1.5,
+                    px: 2.5,
+                    py: 1.5,
+                    borderBottom: (theme) =>
+                      `2px solid ${theme.palette.divider}`,
+                  }}
+                >
+                  <Avatar
+                    src={
+                      user.photoURL ||
+                      "https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                    }
+                    alt={user.displayName || "Profile"}
+                    sx={{ width: 40, height: 40 }}
+                  />
+                  <Typography
+                    variant="subtitle1"
+                    noWrap
+                    sx={{
+                      fontWeight: 600,
+                      background:
+                        theme.palette.mode === "dark"
+                          ? "linear-gradient(135deg, #6366f1, #8b5cf6)"
+                          : "linear-gradient(135deg, #3b82f6, #06b6d4)",
+                      WebkitBackgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                      backgroundClip: "text",
+                      textFillColor: "transparent",
+                    }}
+                  >
+                    {user.displayName || "User"}
+                  </Typography>
+                </Box>
+
+                {/* Dashboard */}
                 <MenuItem
                   component={Link}
                   to="/dashboard"
@@ -208,14 +298,58 @@ const Navbar = () => {
                     handleMenuClose();
                     setActive("dashboard");
                   }}
+                  sx={{
+                    px: 3,
+                    py: 1.25,
+                    fontWeight: 600,
+                    color:
+                      active === "dashboard" ? "transparent" : "text.primary",
+                    background:
+                      active === "dashboard"
+                        ? theme.palette.mode === "dark"
+                          ? "linear-gradient(135deg, #6366f1, #8b5cf6)"
+                          : "linear-gradient(135deg, #3b82f6, #06b6d4)"
+                        : "none",
+                    WebkitBackgroundClip:
+                      active === "dashboard" ? "text" : "unset",
+                    WebkitTextFillColor:
+                      active === "dashboard" ? "transparent" : "unset",
+                    backgroundClip: active === "dashboard" ? "text" : "unset",
+                    textFillColor:
+                      active === "dashboard" ? "transparent" : "unset",
+                    "&:hover": {
+                      backgroundColor: "transparent",
+                      color: "transparent",
+                      background:
+                        theme.palette.mode === "dark"
+                          ? "linear-gradient(135deg, #6366f1, #8b5cf6)"
+                          : "linear-gradient(135deg, #3b82f6, #06b6d4)",
+                      WebkitBackgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                      backgroundClip: "text",
+                      textFillColor: "transparent",
+                    },
+                  }}
                 >
                   Dashboard
                 </MenuItem>
 
+                {/* Logout */}
                 <MenuItem
                   onClick={() => {
                     handleMenuClose();
                     handleLogout();
+                  }}
+                  sx={{
+                    px: 3,
+                    py: 1.25,
+                    fontWeight: 600,
+                    color: theme.palette.error.main,
+                    backgroundColor: "transparent",
+                    "&:hover": {
+                      backgroundColor: theme.palette.action.hover,
+                      filter: "brightness(1.1)",
+                    },
                   }}
                 >
                   Logout
@@ -227,6 +361,21 @@ const Navbar = () => {
               component={Link}
               to="/auth"
               onClick={() => setActive("login")}
+              sx={{
+                fontWeight: 600,
+                px: 3,
+                py: 1,
+                borderRadius: 2,
+                fontSize: "1rem",
+                ...gradientTextStyle(theme), // Apply gradient here too!
+                backgroundColor: "transparent", // keep glassy
+                "&:hover": {
+                  backgroundColor: "transparent", // no bg on hover
+                  textDecoration: "underline",
+                  textDecorationColor:
+                    theme.palette.mode === "dark" ? "#8b5cf6" : "#06b6d4",
+                },
+              }}
             >
               Login
             </GlassButton>
@@ -260,7 +409,7 @@ const Navbar = () => {
         <Box
           sx={{ width: 250 }}
           role="presentation"
-          onClick={(e) => e.stopPropagation()} // prevent click from triggering backdrop close immediately
+          onClick={(e) => e.stopPropagation()}
         >
           <List>
             {navItems.map((item) => (
@@ -274,58 +423,21 @@ const Navbar = () => {
                   setDrawerOpen(false);
                 }}
                 selected={active === item.key}
+                sx={{
+                  borderRadius: 1,
+                  mx: 1,
+                  mb: 1,
+                  "&.Mui-selected": {
+                    background:
+                      theme.palette.mode === "dark"
+                        ? "rgba(107, 114, 255, 0.3)"
+                        : "rgba(99, 102, 241, 0.3)",
+                  },
+                }}
               >
-                <ListItemText
-                  primary={item.label}
-                  primaryTypographyProps={{
-                    color: active === item.key ? "primary" : "textPrimary",
-                  }}
-                />
+                <ListItemText primary={item.label} />
               </ListItem>
             ))}
-
-            {userId ? (
-              <ListItem
-                button
-                onClick={() => {
-                  handleLogout();
-                  setDrawerOpen(false);
-                }}
-              >
-                <ListItemText primary="Logout" />
-              </ListItem>
-            ) : (
-              <ListItem
-                button
-                component={Link}
-                to="/auth"
-                onClick={() => {
-                  setActive("login");
-                  setDrawerOpen(false);
-                }}
-              >
-                <ListItemText primary="Login" />
-              </ListItem>
-            )}
-
-            <ListItem
-              button
-              onClick={() => {
-                toggleTheme();
-                setDrawerOpen(false);
-              }}
-            >
-              <ListItemText
-                primary={mode === "dark" ? "Light Mode" : "Dark Mode"}
-              />
-              <IconButton edge="end" color="inherit">
-                {mode === "dark" ? (
-                  <LightModeOutlinedIcon />
-                ) : (
-                  <DarkModeOutlinedIcon />
-                )}
-              </IconButton>
-            </ListItem>
           </List>
         </Box>
       </Drawer>

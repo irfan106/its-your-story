@@ -1,9 +1,34 @@
 import React from "react";
 import { Box, Chip, Typography, useTheme } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
-const Tags = ({ tags }) => {
+const categories = [
+  "Tech",
+  "Travel",
+  "Lifestyle",
+  "Finance",
+  "Food",
+  "Fiction",
+  "Personal Growth",
+  "Startups",
+  "Culture",
+  "Productivity",
+  "Relationships",
+  "Mental Health",
+  "Books & Reviews",
+  "College Life",
+  "Design & UX",
+];
+
+const Categories = () => {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
+  const navigate = useNavigate();
+
+  const handleCategoryClick = (cat) => {
+    // Navigate to explore page with category param
+    navigate(`/explore?category=${encodeURIComponent(cat)}`);
+  };
 
   return (
     <Box sx={{ my: 4 }}>
@@ -19,7 +44,7 @@ const Tags = ({ tags }) => {
           WebkitTextFillColor: "transparent",
         }}
       >
-        Tags
+        Categories
       </Typography>
 
       <Box
@@ -43,35 +68,36 @@ const Tags = ({ tags }) => {
           transition: "all 0.3s ease",
         }}
       >
-        {tags?.map((tag, index) => (
+        {categories.map((cat) => (
           <Chip
-            key={index}
-            label={tag}
+            key={cat}
+            label={cat}
             clickable
+            onClick={() => handleCategoryClick(cat)}
             sx={{
-              fontWeight: 500,
-              fontSize: 13,
+              fontWeight: 600,
+              fontSize: 14,
               borderRadius: 2,
-              px: 1,
+              px: 2,
               cursor: "pointer",
               backgroundColor: isDark
                 ? "rgba(255, 255, 255, 0.08)"
-                : "rgba(255, 255, 255, 0.25)",
+                : "rgba(255, 255, 255, 0.3)",
               color: isDark ? "#fff" : "#1f2937",
               backdropFilter: "blur(6px)",
               WebkitBackdropFilter: "blur(6px)",
               boxShadow: isDark
-                ? "0 1px 3px rgba(255,255,255,0.05)"
-                : "0 1px 3px rgba(0,0,0,0.08)",
+                ? "0 1px 4px rgba(255,255,255,0.1)"
+                : "0 1px 4px rgba(0,0,0,0.1)",
               transition: "all 0.3s ease",
               "&:hover": {
                 backgroundColor: isDark
-                  ? "rgba(255, 255, 255, 0.18)"
-                  : "rgba(255, 255, 255, 0.85)",
+                  ? "rgba(255, 255, 255, 0.2)"
+                  : "rgba(255, 255, 255, 0.9)",
                 color: isDark ? "#fff" : "#111827",
                 boxShadow: isDark
-                  ? "0 2px 6px rgba(255,255,255,0.15)"
-                  : "0 2px 6px rgba(0,0,0,0.1)",
+                  ? "0 2px 8px rgba(255,255,255,0.2)"
+                  : "0 2px 8px rgba(0,0,0,0.15)",
                 transform: "scale(1.05)",
               },
             }}
@@ -82,4 +108,4 @@ const Tags = ({ tags }) => {
   );
 };
 
-export default Tags;
+export default Categories;

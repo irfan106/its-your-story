@@ -19,6 +19,8 @@ import AboutPage from "./pages/AboutPage";
 import UserProfilePageWrapper from "./pages/UserProfilePageWrapper";
 import DashboardPage from "./pages/DashboardPage";
 import CommonBackground from "./components/CommonBackground";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsOfService";
 
 function App() {
   return (
@@ -38,6 +40,8 @@ function App() {
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/user/:userId" element={<UserProfilePageWrapper />} />
           <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/terms-of-service" element={<TermsOfService />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
         <Footer />

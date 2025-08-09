@@ -16,15 +16,25 @@ import Spinner from "../components/Spinner";
 import BlogCard from "../components/BlogCard";
 import { motion } from "framer-motion";
 import GlassButton from "../components/GlassButton/GlassButton";
+import ProtectedRoute from "./ProtectedRoute";
 
 const DashboardPage = () => {
   const { user } = useAppContext();
-  const { blogs, isLoading } = useMyPaginatedBlogs(1, 2);
+
+  return (
+    <ProtectedRoute user={user}>
+      <DashboardContent user={user} />
+    </ProtectedRoute>
+  );
+};
+
+const DashboardContent = ({ user }) => {
+  const { blogs, isLoading } = useMyPaginatedBlogs(1, 3);
   const { profile, loading: profileLoading } = useUserProfile(user?.uid);
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
 
-  if (!user || profileLoading)
+  if (profileLoading)
     return (
       <Stack
         alignItems="center"
@@ -136,7 +146,14 @@ const DashboardPage = () => {
           <>
             <Grid container spacing={3} justifyContent="center">
               {blogs.map((blog) => (
-                <Grid item xs={12} sm={6} md={4} key={blog.id}>
+                <Grid
+                  item
+                  xs={12}
+                  sm={6}
+                  md={4}
+                  key={blog.id}
+                  justifyItems="center"
+                >
                   <BlogCard blog={blog} />
                 </Grid>
               ))}

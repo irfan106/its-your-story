@@ -31,8 +31,7 @@ const ProtectedRoute = ({ user, children }) => {
               borderRadius: 4,
               textAlign: "center",
               backdropFilter: "blur(12px)",
-              background:
-                "linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02))",
+              background: "transparent",
               border: "1px solid rgba(255,255,255,0.15)",
               boxShadow: "0 10px 30px rgba(0,0,0,0.4)",
               color: "#fff",

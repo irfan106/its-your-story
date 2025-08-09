@@ -3,41 +3,67 @@ import { styled } from "@mui/material/styles";
 
 export const NavButton = styled(Button)(({ theme, active }) => {
   const isDark = theme.palette.mode === "dark";
-  const primaryColor = theme.palette.primary.main;
-  const underlineColor = isDark ? theme.palette.primary.light : primaryColor;
+
+  const gradient = isDark
+    ? "linear-gradient(135deg, #6366f1, #8b5cf6)" // Indigo → Purple dark
+    : "linear-gradient(135deg, #3b82f6, #06b6d4)"; // Blue → Cyan light
+
+  // Helper style for gradient text
+  const gradientTextStyle = {
+    background: gradient,
+    WebkitBackgroundClip: "text",
+    WebkitTextFillColor: "transparent",
+    backgroundClip: "text",
+    textFillColor: "transparent",
+  };
 
   return {
-    color: active ? primaryColor : theme.palette.text.primary,
-    fontWeight: active ? 700 : 500,
+    fontWeight: active ? 600 : 500,
+    fontSize: 16,
     textTransform: "none",
-    fontSize: "18px",
     backgroundColor: "transparent",
+    padding: "6px 10px",
+    borderRadius: 0,
+    minWidth: "auto",
+    cursor: "pointer",
+    userSelect: "none",
     position: "relative",
-    overflow: "hidden",
-    padding: "6px 12px",
-    transition: "color 0.2s ease",
-    "&:hover": {
-      backgroundColor: "transparent",
-      color: primaryColor,
-      transform: "translateY(-1px)",
-    },
-    transition: "color 0.2s ease, transform 0.2s ease",
+    color: theme.palette.text.primary,
+    transition: "color 0.3s ease",
+
+    // Apply gradient text on active
+    ...(active && {
+      ...gradientTextStyle,
+    }),
 
     "&::after": {
       content: '""',
       position: "absolute",
       bottom: 0,
-      left: "50%",
-      transform: "translateX(-50%) scaleX(0)",
-      width: "70%",
-      height: "2px",
-      backgroundColor: underlineColor,
+      left: "10%",
+      right: "10%",
+      height: "3px",
+      borderRadius: "2px",
+      background: active ? gradient : "transparent",
       transformOrigin: "center",
-      transition: "transform 0.3s ease",
+      transform: active ? "scaleX(1)" : "scaleX(0)",
+      transition: "transform 0.3s ease, background 0.3s ease",
     },
 
-    "&:hover::after": {
-      transform: "translateX(-50%) scaleX(1)",
+    // On hover, gradient text and underline
+    "&:hover": {
+      ...gradientTextStyle,
+      backgroundColor: "transparent",
+      "&::after": {
+        background: gradient,
+        transform: "scaleX(1)",
+      },
+    },
+
+    "&:focus-visible": {
+      outline: `2px solid transparent`,
+      boxShadow: `0 0 0 3px ${gradient}`,
+      outlineOffset: 2,
     },
   };
 });

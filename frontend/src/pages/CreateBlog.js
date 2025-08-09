@@ -8,6 +8,7 @@ import { useAppContext } from "../context/AppContext";
 import BlogForm from "../components/BlogForm";
 import { Container, Typography } from "@mui/material";
 import imageCompression from "browser-image-compression";
+import ProtectedRoute from "./ProtectedRoute";
 
 const MIN_LENGTH = 250;
 
@@ -134,22 +135,24 @@ const CreateBlog = () => {
     (progress === null || progress === 100);
 
   return (
-    <Container maxWidth="md">
-      <Typography variant="h4" align="center" sx={{ my: 4 }}>
-        Create New Blog
-      </Typography>
-      <BlogForm
-        form={form}
-        setForm={setForm}
-        handleSubmit={handleSubmit}
-        editing={false}
-        setFile={setFile}
-        imagePreview={imagePreview}
-        categories={categories}
-        setImagePreview={setImagePreview}
-        isFormValid={isFormValid}
-      />
-    </Container>
+    <ProtectedRoute user={user}>
+      <Container maxWidth="md">
+        <Typography variant="h4" align="center" sx={{ my: 4 }}>
+          Create New Blog
+        </Typography>
+        <BlogForm
+          form={form}
+          setForm={setForm}
+          handleSubmit={handleSubmit}
+          editing={false}
+          setFile={setFile}
+          imagePreview={imagePreview}
+          categories={categories}
+          setImagePreview={setImagePreview}
+          isFormValid={isFormValid}
+        />
+      </Container>
+    </ProtectedRoute>
   );
 };
 

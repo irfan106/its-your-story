@@ -13,6 +13,7 @@ import {
   Chip,
   useMediaQuery,
 } from "@mui/material";
+import { useSearchParams } from "react-router-dom";
 import Spinner from "../components/Spinner";
 import BlogCard from "../components/BlogCard";
 import PaginationControls from "../components/PaginationControls";
@@ -37,8 +38,11 @@ const categories = [
 ];
 
 const ExplorePage = () => {
+  const [searchParams] = useSearchParams();
+  const initialCategory = searchParams.get("category") || "";
+
   const [page, setPage] = useState(1);
-  const [category, setCategory] = useState("");
+  const [category, setCategory] = useState(initialCategory);
   const [author, setAuthor] = useState("");
   const [search, setSearch] = useState("");
 
@@ -56,6 +60,12 @@ const ExplorePage = () => {
   const isDark = theme.palette.mode === "dark";
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
+  // Update category if URL param changes (optional, in case URL changes while on page)
+  useEffect(() => {
+    setCategory(initialCategory);
+    setPage(1);
+  }, [initialCategory]);
+
   // Debounce search
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -72,7 +82,7 @@ const ExplorePage = () => {
     return () => clearTimeout(handler);
   }, [author]);
 
-  // Fetch after debounce
+  // Fetch after debounce and filter/sort changes
   useEffect(() => {
     fetchBlogs({
       variables: {
@@ -234,9 +244,21 @@ const ExplorePage = () => {
         </Stack>
       ) : (
         <>
-          <Grid container spacing={4}>
+          <Grid
+            container
+            spacing={4}
+            justifyContent={{ xs: "center", sm: "flex-start" }}
+          >
             {blogs.map((blog) => (
-              <Grid item xs={12} sm={6} md={4} key={blog.id}>
+              <Grid
+                item
+                xs={12}
+                sm={6}
+                md={4}
+                key={blog.id}
+                justifyItems="center"
+                sx={{ mx: { xs: "auto", sm: "unset" } }}
+              >
                 <BlogCard blog={blog} />
               </Grid>
             ))}

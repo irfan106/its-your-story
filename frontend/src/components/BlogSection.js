@@ -42,9 +42,7 @@ const BlogSection = ({ blogs }) => {
             display: "flex",
             flexDirection: { xs: "column", md: "row" },
             overflow: "hidden",
-            backgroundColor: isDark
-              ? "rgba(18, 18, 18, 0.3)"
-              : "rgba(255, 255, 255, 0.25)",
+            backgroundColor: "transparent",
             backdropFilter: "blur(30px)",
             WebkitBackdropFilter: "blur(30px)",
             border: isDark

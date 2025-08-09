@@ -43,9 +43,7 @@ const AuthPage = () => {
           p: { xs: 3, sm: 4 },
           borderRadius: 4,
           backdropFilter: "blur(15px)",
-          background: isDark
-            ? "linear-gradient(135deg, rgba(30,30,30,0.85), rgba(50,50,50,0.85))"
-            : "linear-gradient(135deg, rgba(255,255,255,0.85), rgba(240,240,240,0.85))",
+          background: "transparent",
           boxShadow: isDark
             ? "0 10px 40px rgba(0,0,0,0.6)"
             : "0 10px 30px rgba(0,0,0,0.1)",

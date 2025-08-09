@@ -69,7 +69,14 @@ const MyStoriesPage = () => {
           <>
             <Grid container spacing={4}>
               {blogs.map((blog) => (
-                <Grid item xs={12} sm={6} md={4} key={blog.id}>
+                <Grid
+                  item
+                  xs={12}
+                  sm={6}
+                  md={4}
+                  key={blog.id}
+                  justifyItems="center"
+                >
                   <BlogCard blog={blog} />
                 </Grid>
               ))}

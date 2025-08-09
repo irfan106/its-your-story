@@ -3,7 +3,6 @@ import { Link, useParams } from "react-router-dom";
 import { useAppContext } from "../context/AppContext";
 import { useQuery, gql } from "@apollo/client";
 import MostPopular from "../components/MostPopular";
-import Tags from "../components/Tags";
 import CommentSection from "../components/CommentSection";
 import Spinner from "../components/Spinner";
 import { Box, Stack, Typography, useTheme } from "@mui/material";
@@ -14,6 +13,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import FollowButton from "../components/FollowButton";
 import { getRandomDefaultImg } from "../utility/general.utils";
 import GlassButton from "../components/GlassButton/GlassButton";
+import Categories from "../components/Categories";
 
 const GET_BLOG_DETAIL = gql`
   query GetBlogDetail($id: ID!) {
@@ -61,7 +61,6 @@ const BlogDetails = () => {
   } = useQuery(GET_SIDEBAR_DATA, { variables: { limit: 5 } });
 
   const blog = blogData?.blog;
-  const tags = sidebarData?.blogTags || [];
   const blogs = sidebarData?.mostPopularBlogs || [];
 
   useEffect(() => {
@@ -237,7 +236,7 @@ const BlogDetails = () => {
 
         {/* 🔍 Sidebar */}
         <Box sx={{ flex: 1 }}>
-          <Tags tags={tags} />
+          <Categories />
           <Box mt={4}>
             <MostPopular blogs={blogs} />
           </Box>
