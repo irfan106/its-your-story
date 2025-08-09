@@ -24,10 +24,10 @@ import { useThemeMode } from "../context/ThemeContext";
 import lightLogo from "../assets/light-logo.png";
 import darkLogo from "../assets/dark-logo.png";
 import { NavButton } from "./NavButton";
-import { CustomAuthButton } from "./CustomAuthButton";
 import { useAppContext } from "../context/AppContext";
 import { signOut } from "firebase/auth";
 import { auth } from "../firebase";
+import GlassButton from "./GlassButton/GlassButton";
 
 const Navbar = () => {
   const { user, setUser, setActive, active } = useAppContext();
@@ -226,13 +226,13 @@ const Navbar = () => {
               </Menu>
             </>
           ) : (
-            <CustomAuthButton
+            <GlassButton
               component={Link}
               to="/auth"
               onClick={() => setActive("login")}
             >
               Login
-            </CustomAuthButton>
+            </GlassButton>
           )}
 
           {isMobile && (

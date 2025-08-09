@@ -65,7 +65,8 @@ const GlassButton = ({
           boxShadow: isDark
             ? "0 6px 24px rgba(0,0,0,0.45)"
             : "0 8px 20px rgba(0,122,255,0.15)",
-          textDecoration: "none", // ✅ Prevent link styling
+          textDecoration: "none",
+          color: textColor, // ✅ Prevent link styling
         },
         "&:disabled": {
           opacity: 0.6,

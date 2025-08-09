@@ -15,7 +15,7 @@ import { getRandomDefaultImg } from "../utility/general.utils";
 const BlogCard = ({ blog }) => {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
-
+  console.log(blog?.author, "blog?.author");
   return (
     <Card
       sx={{
@@ -77,7 +77,7 @@ const BlogCard = ({ blog }) => {
         </Typography>
 
         <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
-          <strong>{blog.author}</strong> —{" "}
+          <strong>{blog?.author}</strong> —{" "}
           {new Date(blog.timestamp).toLocaleDateString(undefined, {
             month: "short",
             day: "numeric",

@@ -22,9 +22,7 @@ export default function Footer() {
         pt: 6,
         pb: 4,
         px: 2,
-        background: isDark
-          ? "linear-gradient(135deg, #0f0f0f, #1a1a1a)" // pure blackish gradient
-          : "linear-gradient(135deg, #f1f5f9, #e2e8f0)", // soft bluish for light
+        background: "transparent",
         color: isDark ? "#e5e5e5" : "#1e293b",
         borderTop: `1px solid ${isDark ? "#2a2a2a" : "#cbd5e1"}`,
       }}

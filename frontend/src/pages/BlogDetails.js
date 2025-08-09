@@ -13,7 +13,6 @@ import { db } from "../firebase";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import FollowButton from "../components/FollowButton";
 import { getRandomDefaultImg } from "../utility/general.utils";
-import CommonBackground from "../components/CommonBackground";
 import GlassButton from "../components/GlassButton/GlassButton";
 
 const GET_BLOG_DETAIL = gql`
@@ -99,154 +98,152 @@ const BlogDetails = () => {
   }
 
   return (
-    <CommonBackground>
-      <Box pt={8} pb={6} px={{ xs: 2, md: 10 }}>
-        {/* 🖼 Header Image + Title */}
+    <Box pt={8} pb={6} px={{ xs: 2, md: 10 }}>
+      {/* 🖼 Header Image + Title */}
+      <Box
+        sx={{
+          position: "relative",
+          borderRadius: 4,
+          overflow: "hidden",
+          mb: 6,
+          backgroundImage: `url('${blog?.imgUrl || getRandomDefaultImg()}')`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          height: 320,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          "&::before": {
+            content: '""',
+            position: "absolute",
+            inset: 0,
+            background: "rgba(0,0,0,0.4)",
+            backdropFilter: "blur(6px)",
+          },
+        }}
+      >
         <Box
           sx={{
             position: "relative",
-            borderRadius: 4,
-            overflow: "hidden",
-            mb: 6,
-            backgroundImage: `url('${blog?.imgUrl || getRandomDefaultImg()}')`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            height: 320,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            "&::before": {
-              content: '""',
-              position: "absolute",
-              inset: 0,
-              background: "rgba(0,0,0,0.4)",
-              backdropFilter: "blur(6px)",
-            },
+            zIndex: 1,
+            textAlign: "center",
+            color: "#fff",
           }}
         >
+          <Typography variant="h4" fontWeight={700}>
+            {blog?.title}
+          </Typography>
+          <Typography variant="subtitle2" mt={1}>
+            {new Date(blog?.timestamp).toDateString()}
+          </Typography>
+        </Box>
+      </Box>
+
+      {/* 📄 Blog Content + Sidebar */}
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: { xs: "column", md: "row" },
+          gap: 4,
+        }}
+      >
+        {/* ✏️ Blog Main */}
+        <Box sx={{ flex: 3 }}>
           <Box
             sx={{
-              position: "relative",
-              zIndex: 1,
-              textAlign: "center",
-              color: "#fff",
+              backgroundColor: isDark
+                ? "rgba(255,255,255,0.05)"
+                : "rgba(255,255,255,0.45)",
+              borderRadius: 5,
+              backdropFilter: "blur(16px)",
+              WebkitBackdropFilter: "blur(16px)",
+              border: isDark
+                ? "1px solid rgba(255,255,255,0.08)"
+                : "1px solid rgba(0,0,0,0.08)",
+              boxShadow: isDark
+                ? "0 4px 20px rgba(255,255,255,0.04)"
+                : "0 8px 24px rgba(0,0,0,0.1)",
+              padding: { xs: 3, md: 4 },
+              mb: 6,
             }}
           >
-            <Typography variant="h4" fontWeight={700}>
-              {blog?.title}
-            </Typography>
-            <Typography variant="subtitle2" mt={1}>
-              {new Date(blog?.timestamp).toDateString()}
-            </Typography>
-          </Box>
-        </Box>
-
-        {/* 📄 Blog Content + Sidebar */}
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: { xs: "column", md: "row" },
-            gap: 4,
-          }}
-        >
-          {/* ✏️ Blog Main */}
-          <Box sx={{ flex: 3 }}>
             <Box
+              display="flex"
+              alignItems="center"
+              justifyContent="space-between"
+              mb={2}
+            >
+              <Typography variant="subtitle1" color="text.secondary">
+                By <strong>{blog?.author}</strong>
+              </Typography>
+              {user?.uid === blog?.userId && (
+                <Box display="flex" justifyContent="flex-end" mb={2}>
+                  <GlassButton
+                    variant="contained"
+                    component={Link}
+                    to={`/edit/${blog?.id}`}
+                  >
+                    Edit Blog
+                  </GlassButton>
+                </Box>
+              )}
+              {user?.uid && blog?.userId && (
+                <FollowButton targetUserId={blog.userId} />
+              )}
+            </Box>
+
+            <Box
+              display="flex"
+              alignItems="center"
+              justifyContent="space-between"
+              px={2}
+              py={1}
+              mt={2}
+              mb={3}
+              borderRadius={2}
               sx={{
                 backgroundColor: isDark
-                  ? "rgba(255,255,255,0.05)"
-                  : "rgba(255,255,255,0.45)",
-                borderRadius: 5,
-                backdropFilter: "blur(16px)",
-                WebkitBackdropFilter: "blur(16px)",
+                  ? "rgba(255,255,255,0.04)"
+                  : "rgba(0,0,0,0.03)",
                 border: isDark
                   ? "1px solid rgba(255,255,255,0.08)"
-                  : "1px solid rgba(0,0,0,0.08)",
-                boxShadow: isDark
-                  ? "0 4px 20px rgba(255,255,255,0.04)"
-                  : "0 8px 24px rgba(0,0,0,0.1)",
-                padding: { xs: 3, md: 4 },
-                mb: 6,
+                  : "1px solid rgba(0,0,0,0.05)",
               }}
             >
+              <LikeButton blogId={id} user={user} />
+
               <Box
                 display="flex"
                 alignItems="center"
-                justifyContent="space-between"
-                mb={2}
+                gap={1}
+                color="text.secondary"
               >
-                <Typography variant="subtitle1" color="text.secondary">
-                  By <strong>{blog?.author}</strong>
+                <VisibilityIcon fontSize="small" />
+                <Typography variant="body2">
+                  {blog?.views?.toLocaleString() || 0} views
                 </Typography>
-                {user?.uid === blog?.userId && (
-                  <Box display="flex" justifyContent="flex-end" mb={2}>
-                    <GlassButton
-                      variant="contained"
-                      component={Link}
-                      to={`/edit/${blog?.id}`}
-                    >
-                      Edit Blog
-                    </GlassButton>
-                  </Box>
-                )}
-                {user?.uid && blog?.userId && (
-                  <FollowButton targetUserId={blog.userId} />
-                )}
               </Box>
-
-              <Box
-                display="flex"
-                alignItems="center"
-                justifyContent="space-between"
-                px={2}
-                py={1}
-                mt={2}
-                mb={3}
-                borderRadius={2}
-                sx={{
-                  backgroundColor: isDark
-                    ? "rgba(255,255,255,0.04)"
-                    : "rgba(0,0,0,0.03)",
-                  border: isDark
-                    ? "1px solid rgba(255,255,255,0.08)"
-                    : "1px solid rgba(0,0,0,0.05)",
-                }}
-              >
-                <LikeButton blogId={id} user={user} />
-
-                <Box
-                  display="flex"
-                  alignItems="center"
-                  gap={1}
-                  color="text.secondary"
-                >
-                  <VisibilityIcon fontSize="small" />
-                  <Typography variant="body2">
-                    {blog?.views?.toLocaleString() || 0} views
-                  </Typography>
-                </Box>
-              </Box>
-
-              <Typography
-                variant="body1"
-                sx={{ whiteSpace: "pre-line" }}
-                dangerouslySetInnerHTML={{ __html: blog?.description }}
-              />
             </Box>
 
-            <CommentSection blogId={id} user={user} />
+            <Typography
+              variant="body1"
+              sx={{ whiteSpace: "pre-line" }}
+              dangerouslySetInnerHTML={{ __html: blog?.description }}
+            />
           </Box>
 
-          {/* 🔍 Sidebar */}
-          <Box sx={{ flex: 1 }}>
-            <Tags tags={tags} />
-            <Box mt={4}>
-              <MostPopular blogs={blogs} />
-            </Box>
+          <CommentSection blogId={id} user={user} />
+        </Box>
+
+        {/* 🔍 Sidebar */}
+        <Box sx={{ flex: 1 }}>
+          <Tags tags={tags} />
+          <Box mt={4}>
+            <MostPopular blogs={blogs} />
           </Box>
         </Box>
       </Box>
-    </CommonBackground>
+    </Box>
   );
 };
 

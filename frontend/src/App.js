@@ -18,27 +18,30 @@ import Footer from "./components/Footer";
 import AboutPage from "./pages/AboutPage";
 import UserProfilePageWrapper from "./pages/UserProfilePageWrapper";
 import DashboardPage from "./pages/DashboardPage";
+import CommonBackground from "./components/CommonBackground";
 
 function App() {
   return (
     <>
       <ToastContainer key="toast-container" position="top-right" />
       <Navbar />
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/detail/:id" element={<BlogDetails />} />
-        <Route path="/create" element={<CreateBlog />} />
-        <Route path="/edit/:id" element={<EditBlog />} />
-        <Route path="/about" element={<AboutPage />} />
-        <Route path="/auth" element={<AuthPage />} />
-        <Route path="/explore" element={<ExplorePage />} />
-        <Route path="/my-stories" element={<MyStoriesPage />} />
-        <Route path="/contact" element={<ContactPage />} />
-        <Route path="/user/:userId" element={<UserProfilePageWrapper />} />
-        <Route path="/dashboard" element={<DashboardPage />} />
-        <Route path="*" element={<NotFoundPage />} />
-      </Routes>
-      <Footer />
+      <CommonBackground>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/detail/:id" element={<BlogDetails />} />
+          <Route path="/create" element={<CreateBlog />} />
+          <Route path="/edit/:id" element={<EditBlog />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/auth" element={<AuthPage />} />
+          <Route path="/explore" element={<ExplorePage />} />
+          <Route path="/my-stories" element={<MyStoriesPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/user/:userId" element={<UserProfilePageWrapper />} />
+          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+        <Footer />
+      </CommonBackground>
     </>
   );
 }

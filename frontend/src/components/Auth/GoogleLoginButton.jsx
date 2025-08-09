@@ -1,4 +1,3 @@
-import { Button } from "@mui/material";
 import { FcGoogle } from "react-icons/fc";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth, db } from "../../firebase";

@@ -8,12 +8,12 @@ const Tags = ({ tags }) => {
   return (
     <Box sx={{ my: 4 }}>
       <Typography
-        variant="h6"
+        variant="h5"
         sx={{
-          fontWeight: 600,
-          mb: 2,
+          mb: 3,
+          fontWeight: 700,
           background: isDark
-            ? "linear-gradient(to right, #e0e0e0, #cfcfcf)"
+            ? "linear-gradient(to right, #f4f4f5, #e5e7eb)"
             : "linear-gradient(to right, #1f2937, #4b5563)",
           WebkitBackgroundClip: "text",
           WebkitTextFillColor: "transparent",

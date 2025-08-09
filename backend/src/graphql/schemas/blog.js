@@ -26,7 +26,17 @@ module.exports = gql`
     trendingBlogs(limit: Int): [Blog]
     mostPopularBlogs(limit: Int): [Blog]
     blogTags: [String]
-    blogsByPage(page: Int, pageSize: Int): PaginatedBlogs!
+
+    # Added filters
+    blogsByPage(
+      page: Int
+      pageSize: Int
+      category: String
+      author: String
+      search: String
+      sortOrder: String
+    ): PaginatedBlogs!
+
     myBlogsByPage(page: Int, pageSize: Int): PaginatedBlogs!
   }
 

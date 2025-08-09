@@ -23,7 +23,7 @@ const MostPopular = ({ blogs }) => {
           WebkitTextFillColor: "transparent",
         }}
       >
-        🔥 Most Popular
+        Most Popular
       </Typography>
 
       {blogs?.map((item) => (

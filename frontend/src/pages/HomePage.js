@@ -13,7 +13,6 @@ import { useTrendingBlogs } from "../hooks/useTrendingBlogs";
 import { usePopularBlogs } from "../hooks/usePopularBlogs";
 import { useTags } from "../hooks/useTags";
 import { useAppContext } from "../context/AppContext";
-import CommonBackground from "../components/CommonBackground";
 
 const HomePage = () => {
   const { setActive, user } = useAppContext();
@@ -62,30 +61,28 @@ const HomePage = () => {
   }
 
   return (
-    <CommonBackground>
-      <Box sx={{ py: 10 }}>
-        <Container maxWidth="lg">
-          <Grid container spacing={4}>
-            <Grid item xs={12}>
-              <Trending blogs={trendBlogs} />
-            </Grid>
-
-            <Grid item xs={12} md={8}>
-              <BlogSection
-                blogs={blogs}
-                user={user}
-                handleDelete={handleDelete}
-              />
-            </Grid>
-
-            <Grid item xs={12} md={4}>
-              <Tags tags={tags} />
-              <MostPopular blogs={popularBlogs} />
-            </Grid>
+    <Box sx={{ py: 10 }}>
+      <Container maxWidth="lg">
+        <Grid container spacing={4}>
+          <Grid item xs={12}>
+            <Trending blogs={trendBlogs} />
           </Grid>
-        </Container>
-      </Box>
-    </CommonBackground>
+
+          <Grid item xs={12} md={8}>
+            <BlogSection
+              blogs={blogs}
+              user={user}
+              handleDelete={handleDelete}
+            />
+          </Grid>
+
+          <Grid item xs={12} md={4}>
+            <Tags tags={tags} />
+            <MostPopular blogs={popularBlogs} />
+          </Grid>
+        </Grid>
+      </Container>
+    </Box>
   );
 };
 

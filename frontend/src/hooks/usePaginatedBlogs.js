@@ -1,8 +1,22 @@
-import { gql, useQuery } from "@apollo/client";
+import { gql, useLazyQuery } from "@apollo/client";
 
 export const GET_BLOGS_BY_PAGE = gql`
-  query BlogsByPage($page: Int, $pageSize: Int) {
-    blogsByPage(page: $page, pageSize: $pageSize) {
+  query BlogsByPage(
+    $page: Int
+    $pageSize: Int
+    $category: String
+    $author: String
+    $search: String
+    $sortOrder: String
+  ) {
+    blogsByPage(
+      page: $page
+      pageSize: $pageSize
+      category: $category
+      author: $author
+      search: $search
+      sortOrder: $sortOrder
+    ) {
       blogs {
         id
         title
@@ -10,6 +24,7 @@ export const GET_BLOGS_BY_PAGE = gql`
         imgUrl
         category
         timestamp
+        author
       }
       currentPage
       totalPages
@@ -17,17 +32,16 @@ export const GET_BLOGS_BY_PAGE = gql`
   }
 `;
 
-export const usePaginatedBlogs = (page = 1, pageSize = 6) => {
-  const { data, loading, error, refetch } = useQuery(GET_BLOGS_BY_PAGE, {
-    variables: { page, pageSize },
-  });
+export const usePaginatedBlogs = () => {
+  const [fetchBlogs, { data, loading, error }] =
+    useLazyQuery(GET_BLOGS_BY_PAGE);
 
   return {
-    blogs: data?.blogsByPage.blogs || [],
+    blogs: data?.blogsByPage?.blogs || [],
     isLoading: loading,
-    currentPage: data?.blogsByPage.currentPage || 1,
-    totalPages: data?.blogsByPage.totalPages || 1,
-    refetchPage: (newPage) => refetch({ page: newPage, pageSize }),
+    currentPage: data?.blogsByPage?.currentPage || 1,
+    totalPages: data?.blogsByPage?.totalPages || 1,
+    fetchBlogs, // caller will pass variables when calling
     error,
   };
 };

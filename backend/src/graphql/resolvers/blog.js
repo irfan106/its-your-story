@@ -72,26 +72,49 @@ const blogResolvers = {
       return sortedTags;
     },
 
-    blogsByPage: async (_, { page = 1, pageSize = 6 }) => {
-      const offset = (page - 1) * pageSize;
-      const snapshot = await db
-        .collection("blogs")
-        .orderBy("timestamp", "desc")
-        .offset(offset)
-        .limit(pageSize)
-        .get();
+    blogsByPage: async (
+      _,
+      { page = 1, pageSize = 6, category, author, search, sortOrder = "desc" }
+    ) => {
+      let queryRef = db.collection("blogs");
 
-      const data = snapshot.docs.map((doc) => ({
+      // Apply equality filter
+      if (category) {
+        queryRef = queryRef.where("category", "==", category);
+      }
+
+      // Only inequality filter: author_lower
+      if (author) {
+        const authorLower = author.toLowerCase();
+        queryRef = queryRef
+          .where("author_lower", ">=", authorLower)
+          .where("author_lower", "<=", authorLower + "\uf8ff");
+      }
+
+      // Always order by timestamp
+      queryRef = queryRef.orderBy("timestamp", sortOrder);
+
+      // Fetch ALL results matching Firestore filters
+      const snapshot = await queryRef.get();
+      let blogs = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
         timestamp: doc.data().timestamp?.toDate?.().toISOString?.() || null,
       }));
 
-      const countSnap = await db.collection("blogs").count().get();
-      const total = countSnap.data().count;
+      // Apply title search in-memory (case-insensitive)
+      if (search) {
+        const searchLower = search.toLowerCase();
+        blogs = blogs.filter((b) => b.title_lower?.includes(searchLower));
+      }
+
+      // Apply pagination AFTER filtering
+      const total = blogs.length;
+      const startIndex = (page - 1) * pageSize;
+      const paginatedBlogs = blogs.slice(startIndex, startIndex + pageSize);
 
       return {
-        blogs: data,
+        blogs: paginatedBlogs,
         currentPage: page,
         totalPages: Math.ceil(total / pageSize),
       };

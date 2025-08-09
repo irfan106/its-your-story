@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import {
   Box,
   Container,
@@ -27,9 +27,15 @@ const BlogForm = ({
   editing,
   setFile,
   imagePreview,
+  isFormValid,
+  setImagePreview,
 }) => {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
+  const quillRef = useRef(null);
+
+  const MAX_LENGTH = 5000;
+  const MIN_LENGTH = 250;
 
   const inputEffect = {
     transition: "0.3s",
@@ -71,7 +77,19 @@ const BlogForm = ({
   };
 
   const handleQuillChange = (value) => {
-    setForm({ ...form, description: value });
+    const plainText = value.replace(/<[^>]+>/g, "").trim();
+
+    if (plainText.length <= MAX_LENGTH) {
+      setForm({ ...form, description: value });
+    } else {
+      const truncated = plainText.slice(0, MAX_LENGTH);
+      quillRef.current.getEditor().clipboard.dangerouslyPasteHTML(truncated);
+      setForm({
+        ...form,
+        description: quillRef.current.getEditor().root.innerHTML,
+      });
+      toast.warn(`Content truncated to ${MAX_LENGTH} characters.`);
+    }
   };
 
   return (
@@ -85,9 +103,7 @@ const BlogForm = ({
           p: 4,
           borderRadius: 4,
           backdropFilter: "blur(12px)",
-          background: isDark
-            ? "rgba(30, 30, 30, 0.6)"
-            : "rgba(255, 255, 255, 0.85)",
+          background: "transparent",
           border: `1px solid ${
             isDark ? "rgba(255,255,255,0.2)" : "rgba(0,0,0,0.1)"
           }`,
@@ -102,18 +118,24 @@ const BlogForm = ({
 
         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 3 }}>
           <Grid container spacing={3}>
+            {/* Title */}
             <Grid item xs={12}>
               <TextField
                 fullWidth
-                label="Title"
+                label={
+                  <span>
+                    Title <span style={{ color: "red" }}>*</span>
+                  </span>
+                }
                 name="title"
                 value={form.title}
                 onChange={handleChange}
                 variant="outlined"
-                required
                 InputProps={{ sx: inputEffect }}
               />
             </Grid>
+
+            {/* Subtitle */}
             <Grid item xs={12}>
               <TextField
                 fullWidth
@@ -122,10 +144,11 @@ const BlogForm = ({
                 value={form.subtitle}
                 onChange={handleChange}
                 variant="outlined"
-                required
                 InputProps={{ sx: inputEffect }}
               />
             </Grid>
+
+            {/* Category */}
             <Grid item xs={12}>
               <Select
                 fullWidth
@@ -133,10 +156,11 @@ const BlogForm = ({
                 onChange={handleCategoryChange}
                 name="category"
                 displayEmpty
-                required
               >
                 <MenuItem value="" disabled>
-                  Select a Category
+                  <span>
+                    Select a Category <span style={{ color: "red" }}>*</span>
+                  </span>
                 </MenuItem>
                 {categories.map((cat) => (
                   <MenuItem key={cat} value={cat}>
@@ -145,10 +169,17 @@ const BlogForm = ({
                 ))}
               </Select>
             </Grid>
+
+            {/* Tags */}
             <Grid item xs={12}>
               <TextField
                 fullWidth
-                label="Tags (press Enter to add)"
+                label={
+                  <span>
+                    Tags (press Enter to add){" "}
+                    <span style={{ color: "red" }}>*</span>
+                  </span>
+                }
                 variant="outlined"
                 onKeyDown={handleTagKeyDown}
                 InputProps={{ sx: inputEffect }}
@@ -166,11 +197,11 @@ const BlogForm = ({
               </Box>
             </Grid>
 
+            {/* Content Editor */}
             <Grid item xs={12}>
               <Typography variant="subtitle1" gutterBottom>
-                Content *
+                Content <span style={{ color: "red" }}>*</span>
               </Typography>
-
               <Box
                 sx={{
                   border: `1px solid ${isDark ? "#444" : "#ccc"}`,
@@ -187,7 +218,7 @@ const BlogForm = ({
                   // Quill toolbar styles
                   "& .ql-toolbar": {
                     border: "none",
-                    backgroundColor: isDark ? "#2a2a2a" : "#f3f3f3",
+                    backgroundColor: "transparent",
                     borderBottom: `1px solid ${isDark ? "#555" : "#ddd"}`,
                     button: {
                       color: isDark ? "#ccc" : "#333",
@@ -205,7 +236,7 @@ const BlogForm = ({
 
                   "& .ql-container": {
                     border: "none",
-                    backgroundColor: isDark ? "#1e1e1e" : "#fff",
+                    backgroundColor: "transparent",
                     borderRadius: 0,
                   },
                   "& .ql-editor": {
@@ -221,15 +252,37 @@ const BlogForm = ({
                 }}
               >
                 <ReactQuill
+                  ref={quillRef}
                   value={form.description}
                   onChange={handleQuillChange}
                   theme="snow"
                 />
               </Box>
+              <Box
+                sx={{
+                  mt: 1,
+                  textAlign: "right",
+                  fontSize: 13,
+                  color:
+                    form.description.replace(/<[^>]+>/g, "").trim().length <
+                    MIN_LENGTH
+                      ? "error.main"
+                      : isDark
+                      ? "#bbb"
+                      : "#666",
+                }}
+              >
+                {form.description.replace(/<[^>]+>/g, "").trim().length} /{" "}
+                {MAX_LENGTH} characters
+                {form.description.replace(/<[^>]+>/g, "").trim().length <
+                  MIN_LENGTH && " (min 250 characters required)"}
+              </Box>
             </Grid>
+
+            {/* Image Upload */}
             <Grid item xs={12}>
               <Typography variant="subtitle1" gutterBottom>
-                Upload Blog Image (Required)
+                Upload Blog Image <span style={{ color: "red" }}>*</span>
               </Typography>
               <GlassButton variant="outlined" component="label" sx={{ mb: 2 }}>
                 Choose File
@@ -246,6 +299,7 @@ const BlogForm = ({
                         return;
                       }
                       setFile(selectedFile);
+                      setImagePreview(selectedFile);
                       setForm({ ...form, imgUrl: "" });
                     }
                   }}
@@ -269,8 +323,15 @@ const BlogForm = ({
                 />
               )}
             </Grid>
+
+            {/* Submit */}
             <Grid item xs={12} textAlign="right">
-              <GlassButton type="submit" variant="contained" size="large">
+              <GlassButton
+                type="submit"
+                variant="contained"
+                size="large"
+                disabled={!isFormValid}
+              >
                 {editing ? "Update Blog" : "Create Blog"}
               </GlassButton>
             </Grid>
