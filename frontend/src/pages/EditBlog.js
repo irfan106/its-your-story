@@ -1,44 +1,45 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { doc, getDoc, updateDoc, serverTimestamp } from "firebase/firestore";
-import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { toast } from "react-toastify";
-import { db, storage } from "../firebase";
+import { db } from "../firebase";
 import BlogForm from "../components/BlogForm";
 import { Container, Stack, Typography } from "@mui/material";
 import Spinner from "../components/Spinner";
 import { useAppContext } from "../context/AppContext";
-import imageCompression from "browser-image-compression";
 import ProtectedRoute from "./ProtectedRoute";
+import useFileUpload from "../hooks/useFileUpload";
 
 const MIN_LENGTH = 250;
 
+const categories = [
+  "Tech",
+  "Travel",
+  "Lifestyle",
+  "Finance",
+  "Food",
+  "Fiction",
+  "Personal Growth",
+  "Startups",
+  "Culture",
+  "Productivity",
+  "Relationships",
+  "Mental Health",
+  "Books & Reviews",
+  "College Life",
+  "Design & UX",
+];
+
 const EditBlog = () => {
   const { id } = useParams();
-  const [form, setForm] = useState(null);
-  const [file, setFile] = useState(null);
-  const [progress, setProgress] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null);
   const { user } = useAppContext();
   const navigate = useNavigate();
 
-  const categories = [
-    "Tech",
-    "Travel",
-    "Lifestyle",
-    "Finance",
-    "Food",
-    "Fiction",
-    "Personal Growth",
-    "Startups",
-    "Culture",
-    "Productivity",
-    "Relationships",
-    "Mental Health",
-    "Books & Reviews",
-    "College Life",
-    "Design & UX",
-  ];
+  const [form, setForm] = useState(null);
+
+  // Custom hook for file upload with initial preview
+  const { file, setFile, preview, setPreview, progress, url, startUpload } =
+    useFileUpload(form?.imgUrl || "");
 
   // Fetch blog data
   useEffect(() => {
@@ -48,7 +49,11 @@ const EditBlog = () => {
         if (snap.exists()) {
           const data = snap.data();
           setForm({ ...data, tags: data.tags || [] });
-          setImagePreview(data.imgUrl || null);
+
+          // Set existing image as preview
+          if (data.imgUrl) {
+            setPreview(data.imgUrl);
+          }
         } else {
           toast.error("Blog not found");
           navigate("/");
@@ -60,62 +65,17 @@ const EditBlog = () => {
     };
 
     fetchBlog();
-  }, [id, navigate]);
+  }, [id, navigate, setPreview]);
 
-  // Compress and upload image
-  useEffect(() => {
-    const uploadCompressedFile = async () => {
-      if (!file) return;
-
-      try {
-        const options = {
-          maxSizeMB: 0.5,
-          maxWidthOrHeight: 1280,
-          useWebWorker: true,
-        };
-
-        const compressedFile = await imageCompression(file, options);
-        const storageRef = ref(storage, `compressed_${file.name}`);
-        const uploadTask = uploadBytesResumable(storageRef, compressedFile);
-
-        uploadTask.on(
-          "state_changed",
-          (snapshot) => {
-            const prog =
-              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            setProgress(prog);
-          },
-          (error) => {
-            console.error("Upload error:", error);
-            toast.error("Image upload failed");
-          },
-          async () => {
-            const url = await getDownloadURL(uploadTask.snapshot.ref);
-            toast.success("Image uploaded successfully");
-            setForm((prev) => ({ ...prev, imgUrl: url }));
-          }
-        );
-      } catch (err) {
-        console.error("Image compression failed:", err);
-        toast.error("Image compression failed");
-      }
-    };
-
-    uploadCompressedFile();
-  }, [file]);
-
-  // Submit edited blog
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const { title, subtitle, tags, category, description, imgUrl } = form;
+    if (!form) return;
+
+    const { title, subtitle, tags, category, description } = form;
 
     if (!title || !subtitle || !category || !tags.length || !description) {
       return toast.error("All fields are required.");
-    }
-
-    if (!imgUrl || (progress !== null && progress < 100)) {
-      return toast.info("Please wait for the image to finish uploading.");
     }
 
     const plainTextLength = description.replace(/<[^>]+>/g, "").trim().length;
@@ -123,8 +83,13 @@ const EditBlog = () => {
       return toast.error("Content must be at least 250 characters.");
     }
 
+    if (file && !url && progress !== 100) {
+      return toast.info("Please upload the image before submitting.");
+    }
+
     const updatedData = {
       ...form,
+      imgUrl: url || form.imgUrl,
       timestamp: serverTimestamp(),
       author: user.displayName,
       author_lower: (user.displayName || "").toLowerCase(),
@@ -149,7 +114,7 @@ const EditBlog = () => {
     form.category &&
     form.tags.length > 0 &&
     form.description.replace(/<[^>]+>/g, "").trim().length >= MIN_LENGTH &&
-    form.imgUrl &&
+    (form.imgUrl || url) &&
     (progress === null || progress === 100);
 
   return form ? (
@@ -163,11 +128,13 @@ const EditBlog = () => {
           setForm={setForm}
           handleSubmit={handleSubmit}
           editing={true}
-          setFile={setFile}
-          imagePreview={imagePreview}
+          setFile={setFile} // selects new file
+          startUpload={startUpload} // triggers upload
+          uploadProgress={progress}
           categories={categories}
           isFormValid={isFormValid}
-          setImagePreview={setImagePreview}
+          imagePreview={preview || form.imgUrl} // existing image
+          url={url}
         />
       </Container>
     </ProtectedRoute>

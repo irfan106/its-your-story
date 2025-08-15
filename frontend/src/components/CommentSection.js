@@ -27,7 +27,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 
 dayjs.extend(relativeTime);
 
-const MAX_COMMENT_LENGTH = 200;
+const MAX_COMMENT_LENGTH = 500;
 const DEFAULT_VISIBLE_COMMENTS = 5;
 
 const CommentSection = ({ blogId, user }) => {

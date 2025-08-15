@@ -1,14 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
-import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { toast } from "react-toastify";
-import { db, storage } from "../firebase";
+import { db } from "../firebase";
 import { useAppContext } from "../context/AppContext";
 import BlogForm from "../components/BlogForm";
 import { Container, Typography } from "@mui/material";
-import imageCompression from "browser-image-compression";
 import ProtectedRoute from "./ProtectedRoute";
+import useFileUpload from "../hooks/useFileUpload";
 
 const MIN_LENGTH = 250;
 
@@ -24,10 +23,6 @@ const CreateBlog = () => {
     description: "",
     imgUrl: "",
   });
-
-  const [file, setFile] = useState(null);
-  const [progress, setProgress] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null);
 
   const categories = [
     "Tech",
@@ -47,58 +42,20 @@ const CreateBlog = () => {
     "Design & UX",
   ];
 
-  useEffect(() => {
-    const uploadCompressedFile = async () => {
-      if (!file) return;
-
-      try {
-        const options = {
-          maxSizeMB: 0.5,
-          maxWidthOrHeight: 1280,
-          useWebWorker: true,
-        };
-
-        const compressedFile = await imageCompression(file, options);
-        const storageRef = ref(storage, `compressed_${file.name}`);
-        const uploadTask = uploadBytesResumable(storageRef, compressedFile);
-
-        uploadTask.on(
-          "state_changed",
-          (snapshot) => {
-            const prog =
-              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            setProgress(prog);
-          },
-          (error) => {
-            console.error("Upload error:", error);
-            toast.error("Image upload failed");
-          },
-          async () => {
-            const url = await getDownloadURL(uploadTask.snapshot.ref);
-            toast.success("Image uploaded successfully");
-            setForm((prev) => ({ ...prev, imgUrl: url }));
-          }
-        );
-      } catch (err) {
-        console.error("Image compression failed:", err);
-        toast.error("Image compression failed");
-      }
-    };
-
-    uploadCompressedFile();
-  }, [file]);
+  // Custom hook for image upload
+  const { setFile, preview, progress, url, startUpload } = useFileUpload();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const { title, tags, category, description, imgUrl } = form;
+    const { title, tags, category, description } = form;
 
     if (!title || !category || !tags.length || !description) {
       return toast.error("All required fields must be filled.");
     }
 
-    if (!imgUrl || (progress !== null && progress < 100)) {
-      return toast.info("Please wait for the image to finish uploading.");
+    if (!url) {
+      return toast.error("Please upload an image before submitting.");
     }
 
     const plainTextLength = description.replace(/<[^>]+>/g, "").trim().length;
@@ -108,6 +65,7 @@ const CreateBlog = () => {
 
     const newPost = {
       ...form,
+      imgUrl: url,
       author: user.displayName,
       author_lower: (user.displayName || "").toLowerCase(),
       title_lower: (form.title || "").toLowerCase(),
@@ -131,8 +89,7 @@ const CreateBlog = () => {
     form.category &&
     form.tags.length > 0 &&
     form.description.replace(/<[^>]+>/g, "").trim().length >= MIN_LENGTH &&
-    form.imgUrl &&
-    (progress === null || progress === 100);
+    url;
 
   return (
     <ProtectedRoute user={user}>
@@ -146,10 +103,12 @@ const CreateBlog = () => {
           handleSubmit={handleSubmit}
           editing={false}
           setFile={setFile}
-          imagePreview={imagePreview}
+          startUpload={startUpload}
+          imagePreview={preview}
+          uploadProgress={progress}
           categories={categories}
-          setImagePreview={setImagePreview}
           isFormValid={isFormValid}
+          url={url}
         />
       </Container>
     </ProtectedRoute>
