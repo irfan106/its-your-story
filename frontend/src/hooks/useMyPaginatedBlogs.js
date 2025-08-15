@@ -10,6 +10,7 @@ export const GET_MY_BLOGS_BY_PAGE = gql`
         imgUrl
         category
         timestamp
+        author
       }
       currentPage
       totalPages

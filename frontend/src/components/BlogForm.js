@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import {
   Box,
   Container,
@@ -10,6 +10,7 @@ import {
   Typography,
   useTheme,
   Chip,
+  LinearProgress,
 } from "@mui/material";
 import { motion } from "framer-motion";
 import ReactQuill from "react-quill";
@@ -26,13 +27,17 @@ const BlogForm = ({
   categories = [],
   editing,
   setFile,
-  imagePreview,
+  startUpload,
+  uploadProgress,
   isFormValid,
-  setImagePreview,
+  imagePreview = "",
+  url,
 }) => {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
   const quillRef = useRef(null);
+  const [selectedFile, setSelectedFileState] = useState(null);
+  const [preview, setPreview] = useState(imagePreview);
 
   const MAX_LENGTH = 5000;
   const MIN_LENGTH = 250;
@@ -282,8 +287,9 @@ const BlogForm = ({
             {/* Image Upload */}
             <Grid item xs={12}>
               <Typography variant="subtitle1" gutterBottom>
-                Upload Blog Image <span style={{ color: "red" }}>*</span>
+                Blog Image *
               </Typography>
+
               <GlassButton variant="outlined" component="label" sx={{ mb: 2 }}>
                 Choose File
                 <input
@@ -291,36 +297,71 @@ const BlogForm = ({
                   hidden
                   accept="image/*"
                   onChange={(e) => {
-                    const selectedFile = e.target.files[0];
-                    if (selectedFile) {
-                      const maxSize = 2 * 1024 * 1024;
-                      if (selectedFile.size > maxSize) {
-                        toast.error("Image must be less than 2MB");
-                        return;
-                      }
-                      setFile(selectedFile);
-                      setImagePreview(selectedFile);
-                      setForm({ ...form, imgUrl: "" });
+                    const selected = e.target.files[0];
+                    if (!selected) return;
+
+                    if (selected.size > 2 * 1024 * 1024) {
+                      toast.error("Image must be less than 2MB");
+                      return;
                     }
+
+                    setFile(selected); // parent upload
+                    setSelectedFileState(selected); // local
+                    setPreview(URL.createObjectURL(selected)); // preview
                   }}
                 />
               </GlassButton>
-              {imagePreview && (
+
+              {preview && (
+                <Box sx={{ mb: 2 }}>
+                  <img
+                    src={preview}
+                    alt="Preview"
+                    style={{
+                      width: "100%",
+                      maxHeight: 300,
+                      objectFit: "cover",
+                      borderRadius: 8,
+                    }}
+                  />
+
+                  {/* Only show upload/remove buttons if there's a selected file AND no URL yet */}
+                  {selectedFile && !url && (
+                    <Box sx={{ display: "flex", gap: 2, mt: 1 }}>
+                      <GlassButton
+                        variant="contained"
+                        onClick={startUpload}
+                        disabled={!selectedFile}
+                      >
+                        Upload Image
+                      </GlassButton>
+                      <GlassButton
+                        variant="outlined"
+                        color="error"
+                        onClick={() => {
+                          setFile(null);
+                          setSelectedFileState(null);
+                          setPreview("");
+                        }}
+                      >
+                        Remove Image
+                      </GlassButton>
+                    </Box>
+                  )}
+                </Box>
+              )}
+
+              {uploadProgress !== null && (
                 <Box
-                  component="img"
-                  src={
-                    typeof imagePreview === "string"
-                      ? imagePreview
-                      : URL.createObjectURL(imagePreview)
-                  }
-                  alt="Preview"
-                  sx={{
-                    width: "100%",
-                    maxHeight: 300,
-                    objectFit: "cover",
-                    borderRadius: 2,
-                  }}
-                />
+                  sx={{ mt: 1, display: "flex", alignItems: "center", gap: 1 }}
+                >
+                  <LinearProgress
+                    variant="determinate"
+                    value={uploadProgress}
+                    sx={{ flexGrow: 1 }}
+                  />
+                  <Typography variant="body2">{uploadProgress}%</Typography>
+                </Box>
               )}
             </Grid>
 

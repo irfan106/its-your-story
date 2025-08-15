@@ -21,6 +21,7 @@ import DashboardPage from "./pages/DashboardPage";
 import CommonBackground from "./components/CommonBackground";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
+import EditProfilePage from "./pages/EditProfilePage";
 
 function App() {
   return (
@@ -42,6 +43,7 @@ function App() {
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-of-service" element={<TermsOfService />} />
+          <Route path="/edit-profile" element={<EditProfilePage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
         <Footer />

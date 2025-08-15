@@ -11,6 +11,7 @@ import {
 import { Link } from "react-router-dom";
 import { excerpt } from "../utility";
 import { getRandomDefaultImg } from "../utility/general.utils";
+import GlassButton from "./GlassButton/GlassButton";
 
 const BlogSection = ({ blogs }) => {
   const theme = useTheme();
@@ -121,39 +122,9 @@ const BlogSection = ({ blogs }) => {
 
       <Grid item xs={12}>
         <Box sx={{ textAlign: "center", mt: 5 }}>
-          <MuiLink
-            component={Link}
-            to="/explore"
-            sx={{
-              fontWeight: 600,
-              fontSize: "1rem",
-              px: 4,
-              py: 1.2,
-              borderRadius: 3,
-              textTransform: "none",
-              backdropFilter: "blur(8px)",
-              WebkitBackdropFilter: "blur(8px)",
-              color: isDark ? "#fff" : "#111827",
-              textDecoration: "none",
-              backgroundColor: isDark
-                ? "rgba(255, 255, 255, 0.05)"
-                : "rgba(255, 255, 255, 0.4)",
-              border: isDark
-                ? "1px solid rgba(255, 255, 255, 0.1)"
-                : "1px solid rgba(0, 0, 0, 0.1)",
-              "&:hover": {
-                backgroundColor: isDark
-                  ? "rgba(255, 255, 255, 0.1)"
-                  : "rgba(255, 255, 255, 0.65)",
-                color: isDark ? "#fff" : "#111827",
-                boxShadow: isDark
-                  ? "0 0 10px rgba(255, 255, 255, 0.08)"
-                  : "0 6px 16px rgba(0, 0, 0, 0.12)",
-              },
-            }}
-          >
+          <GlassButton component={Link} to="/explore">
             View More Stories
-          </MuiLink>
+          </GlassButton>
         </Box>
       </Grid>
     </Box>

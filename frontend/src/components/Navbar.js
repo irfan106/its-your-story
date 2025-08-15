@@ -362,11 +362,6 @@ const Navbar = () => {
               to="/auth"
               onClick={() => setActive("login")}
               sx={{
-                fontWeight: 600,
-                px: 3,
-                py: 1,
-                borderRadius: 2,
-                fontSize: "1rem",
                 ...gradientTextStyle(theme), // Apply gradient here too!
                 backgroundColor: "transparent", // keep glassy
                 "&:hover": {
