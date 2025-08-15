@@ -31,7 +31,7 @@ export default function useFileUpload(initialPreview = "") {
       setUrl("");
     } catch (err) {
       console.error("Image compression error:", err);
-      toast.error("Failed to compress image-testing change");
+      toast.error("Failed to compress image");
     }
   };
 
