@@ -26,7 +26,17 @@ import EditProfilePage from "./pages/EditProfilePage";
 function App() {
   return (
     <>
-      <ToastContainer key="toast-container" position="top-right" />
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
       <Navbar />
       <CommonBackground>
         <Routes>

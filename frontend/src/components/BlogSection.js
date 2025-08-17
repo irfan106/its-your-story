@@ -83,7 +83,7 @@ const BlogSection = ({ blogs }) => {
               </Typography>
 
               <Typography variant="h6" sx={{ mb: 1, mt: 1 }}>
-                {item.title}
+                {excerpt(item.title, 40)}
               </Typography>
 
               <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
