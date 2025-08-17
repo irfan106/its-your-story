@@ -1,4 +1,4 @@
-import { TextField, Grid, Typography, useTheme, Box } from "@mui/material";
+import { TextField, Grid, Typography, useTheme } from "@mui/material";
 import { useState } from "react";
 import {
   createUserWithEmailAndPassword,

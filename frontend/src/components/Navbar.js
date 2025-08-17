@@ -15,7 +15,6 @@ import {
   useMediaQuery,
   useTheme,
   Tooltip,
-  Divider,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
@@ -29,9 +28,11 @@ import { useAppContext } from "../context/AppContext";
 import { signOut } from "firebase/auth";
 import { auth } from "../firebase";
 import GlassButton from "./GlassButton/GlassButton";
+import { useUserProfile } from "../hooks/useUserProfile";
 
 const Navbar = () => {
   const { user, setUser, setActive, active } = useAppContext();
+  const { profile } = useUserProfile(user?.uid);
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -200,7 +201,7 @@ const Navbar = () => {
                 <Tooltip title="Account Settings">
                   <Avatar
                     src={
-                      user.photoURL ||
+                      profile?.photoURL ||
                       "https://cdn-icons-png.flaticon.com/512/149/149071.png"
                     }
                     alt={user.displayName || "Profile"}
@@ -265,7 +266,7 @@ const Navbar = () => {
                 >
                   <Avatar
                     src={
-                      user.photoURL ||
+                      profile?.photoURL ||
                       "https://cdn-icons-png.flaticon.com/512/149/149071.png"
                     }
                     alt={user.displayName || "Profile"}
@@ -391,10 +392,8 @@ const Navbar = () => {
         PaperProps={{
           sx: {
             width: 270,
-            background:
-              theme.palette.mode === "dark"
-                ? "linear-gradient(135deg, #121212, #1f1f1f)"
-                : "linear-gradient(135deg, #fdfdfd, #f3f3f3)",
+            background: "transparent",
+            backdropFilter: "blur(8px)",
             borderLeft: `1px solid ${
               theme.palette.mode === "dark" ? "#333" : "#ddd"
             }`,

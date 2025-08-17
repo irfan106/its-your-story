@@ -41,19 +41,17 @@ const BlogForm = ({
 
   const MAX_LENGTH = 5000;
   const MIN_LENGTH = 250;
+  const MAX_TAG_LENGTH = 30;
 
-  const inputEffect = {
-    transition: "0.3s",
-    "&:hover": {
-      boxShadow: `0 0 0 2px ${isDark ? "#90caf940" : "#1976d230"}`,
-    },
-    "&.Mui-focused": {
-      boxShadow: `0 0 0 2px ${isDark ? "#90caf980" : "#1976d260"}`,
-    },
+  const MAX_LENGTHS = {
+    title: 100,
+    subtitle: 200,
   };
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    if (MAX_LENGTHS[name] && value.length > MAX_LENGTHS[name]) return; // prevent overflow
+    setForm({ ...form, [name]: value });
   };
 
   const handleCategoryChange = (e) => {
@@ -64,12 +62,19 @@ const BlogForm = ({
     if (e.key === "Enter" && e.target.value.trim()) {
       e.preventDefault();
       const newTag = e.target.value.trim();
+
+      if (newTag.length > MAX_TAG_LENGTH) {
+        toast.error(`Tag cannot exceed ${MAX_TAG_LENGTH} characters`);
+        return;
+      }
+
       if (!form.tags.includes(newTag)) {
         setForm((prev) => ({
           ...prev,
           tags: [...prev.tags, newTag],
         }));
       }
+
       e.target.value = "";
     }
   };
@@ -136,7 +141,12 @@ const BlogForm = ({
                 value={form.title}
                 onChange={handleChange}
                 variant="outlined"
-                InputProps={{ sx: inputEffect }}
+                helperText={
+                  form.title.length > MAX_LENGTHS.title
+                    ? `Maximum ${MAX_LENGTHS.title} characters allowed`
+                    : `${form.title.length} / ${MAX_LENGTHS.title}`
+                }
+                error={form.title.length > MAX_LENGTHS.title}
               />
             </Grid>
 
@@ -149,7 +159,12 @@ const BlogForm = ({
                 value={form.subtitle}
                 onChange={handleChange}
                 variant="outlined"
-                InputProps={{ sx: inputEffect }}
+                helperText={
+                  form.subtitle.length > MAX_LENGTHS.subtitle
+                    ? `Maximum ${MAX_LENGTHS.subtitle} characters allowed`
+                    : `${form.subtitle.length} / ${MAX_LENGTHS.subtitle}`
+                }
+                error={form.subtitle.length > MAX_LENGTHS.subtitle}
               />
             </Grid>
 
@@ -179,15 +194,9 @@ const BlogForm = ({
             <Grid item xs={12}>
               <TextField
                 fullWidth
-                label={
-                  <span>
-                    Tags (press Enter to add){" "}
-                    <span style={{ color: "red" }}>*</span>
-                  </span>
-                }
+                label={`Tags (press Enter to add, max ${MAX_TAG_LENGTH} chars)`}
                 variant="outlined"
                 onKeyDown={handleTagKeyDown}
-                InputProps={{ sx: inputEffect }}
               />
               <Box sx={{ mt: 1 }}>
                 {form.tags.map((tag) => (
