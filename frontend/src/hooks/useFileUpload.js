@@ -36,30 +36,39 @@ export default function useFileUpload(initialPreview = "") {
   };
 
   const startUpload = () => {
-    if (!file) return;
+    return new Promise((resolve, reject) => {
+      if (!file) return resolve(null);
 
-    const storageRef = ref(storage, `${uniqueId}-${file.name}`);
-    const uploadTask = uploadBytesResumable(storageRef, file);
+      const storageRef = ref(storage, `${uniqueId}-${file.name}`);
+      const uploadTask = uploadBytesResumable(storageRef, file);
 
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {
-        const progressPercent = Math.round(
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-        );
-        setProgress(progressPercent);
-      },
-      (error) => {
-        console.error("Upload error:", error);
-        toast.error("Image upload failed");
-      },
-      async () => {
-        const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
-        setUrl(downloadUrl);
-        setProgress(null);
-        toast.success("Image uploaded successfully");
-      }
-    );
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progressPercent = Math.round(
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+          );
+          setProgress(progressPercent);
+        },
+        (error) => {
+          console.error("Upload error:", error);
+          toast.error("Image upload failed");
+          reject(error);
+        },
+        async () => {
+          try {
+            const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
+            const cacheBustedUrl = `${downloadUrl}?t=${Date.now()}`; // prevent caching
+            setUrl(cacheBustedUrl);
+            setProgress(null);
+            toast.success("Image uploaded successfully");
+            resolve(cacheBustedUrl); // ✅ return it
+          } catch (err) {
+            reject(err);
+          }
+        }
+      );
+    });
   };
 
   return { file, setFile, preview, setPreview, progress, url, startUpload };

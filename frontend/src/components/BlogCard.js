@@ -5,7 +5,6 @@ import {
   CardContent,
   Typography,
   useTheme,
-  Box,
   Link as MuiLink,
 } from "@mui/material";
 import { Link } from "react-router-dom";
@@ -15,7 +14,6 @@ import { getRandomDefaultImg } from "../utility/general.utils";
 const BlogCard = ({ blog }) => {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
-  console.log(blog?.author, "blog?.author");
   return (
     <Card
       sx={{
@@ -71,7 +69,7 @@ const BlogCard = ({ blog }) => {
             color: isDark ? "#fff" : "#1f2937",
           }}
         >
-          {excerpt(blog.title, 30)}
+          {excerpt(blog.title, 20)}
         </Typography>
 
         <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
@@ -84,7 +82,7 @@ const BlogCard = ({ blog }) => {
         </Typography>
 
         <Typography variant="body2">
-          {excerpt(blog.description, 80)}{" "}
+          {excerpt(blog.description, 50)}{" "}
           <MuiLink
             component={Link}
             to={`/detail/${blog.id}`}

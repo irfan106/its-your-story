@@ -8,10 +8,11 @@ module.exports = gql`
     imgUrl: String
     author: String
     userId: String
+    subtitle: String
     category: String
     tags: [String]
     timestamp: String
-    views: Int
+    views: Float
   }
 
   type PaginatedBlogs {

@@ -10,7 +10,6 @@ import { db } from "../firebase";
 import { useBlogs } from "../hooks/useBlogs";
 import { useTrendingBlogs } from "../hooks/useTrendingBlogs";
 import { usePopularBlogs } from "../hooks/usePopularBlogs";
-import { useTags } from "../hooks/useTags";
 import { useAppContext } from "../context/AppContext";
 import Categories from "../components/Categories";
 

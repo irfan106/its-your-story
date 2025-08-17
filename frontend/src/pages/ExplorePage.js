@@ -195,7 +195,7 @@ const ExplorePage = () => {
       <Stack
         direction={isMobile ? "column" : "row"}
         spacing={2}
-        mb={4}
+        mb={5}
         alignItems="stretch"
       >
         <TextField
@@ -213,8 +213,21 @@ const ExplorePage = () => {
           fullWidth
         />
         <FormControl fullWidth={isMobile} sx={{ minWidth: 150 }}>
-          <InputLabel>Sort Stories</InputLabel>
-          <Select value={sortOrder} onChange={handleSortChange}>
+          <Select
+            value={sortOrder}
+            onChange={handleSortChange}
+            displayEmpty
+            renderValue={(selected) =>
+              selected === ""
+                ? "Sort Stories"
+                : selected === "desc"
+                ? "Newest First"
+                : "Oldest First"
+            }
+          >
+            <MenuItem disabled value="">
+              Sort Stories
+            </MenuItem>
             <MenuItem value="desc">Newest First</MenuItem>
             <MenuItem value="asc">Oldest First</MenuItem>
           </Select>

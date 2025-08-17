@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useAppContext } from "../context/AppContext";
 import { useQuery, gql } from "@apollo/client";
 import MostPopular from "../components/MostPopular";
@@ -7,13 +7,15 @@ import CommentSection from "../components/CommentSection";
 import Spinner from "../components/Spinner";
 import { Box, Stack, Typography, useTheme } from "@mui/material";
 import LikeButton from "../components/LikeButton";
-import { doc, updateDoc, increment } from "firebase/firestore";
+import { doc, updateDoc, increment, deleteDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import FollowButton from "../components/FollowButton";
-import { getRandomDefaultImg } from "../utility/general.utils";
+import { formatViews, getRandomDefaultImg } from "../utility/general.utils";
 import GlassButton from "../components/GlassButton/GlassButton";
 import Categories from "../components/Categories";
+import ConfirmDialog from "../components/ConfirmDialog";
+import { toast } from "react-toastify";
 
 const GET_BLOG_DETAIL = gql`
   query GetBlogDetail($id: ID!) {
@@ -26,6 +28,7 @@ const GET_BLOG_DETAIL = gql`
       userId
       timestamp
       views
+      subtitle
     }
   }
 `;
@@ -47,6 +50,33 @@ const BlogDetails = () => {
   const { user, setActive } = useAppContext();
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const navigate = useNavigate();
+
+  const handleDelete = async () => {
+    try {
+      setDeleting(true);
+
+      // 🔥 delete from firestore
+      await deleteDoc(doc(db, "blogs", id));
+
+      setOpenDeleteDialog(false);
+
+      // ✅ success toast
+      toast.success("Your story was deleted successfully!");
+
+      // redirect after delete
+      navigate("/my-stories");
+    } catch (err) {
+      console.error("Delete failed:", err);
+
+      // ❌ error toast
+      toast.error("Failed to delete story. Please try again.");
+    } finally {
+      setDeleting(false);
+    }
+  };
 
   const {
     data: blogData,
@@ -97,157 +127,173 @@ const BlogDetails = () => {
   }
 
   return (
-    <Box pt={8} pb={6} px={{ xs: 2, md: 10 }}>
-      {/* 🖼 Header Image + Title */}
-      <Box
-        sx={{
-          position: "relative",
-          borderRadius: 4,
-          overflow: "hidden",
-          mb: 6,
-          backgroundImage: `url('${blog?.imgUrl || getRandomDefaultImg()}')`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          height: 320,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          "&::before": {
-            content: '""',
-            position: "absolute",
-            inset: 0,
-            background: "rgba(0,0,0,0.4)",
-            backdropFilter: "blur(6px)",
-          },
-        }}
-      >
+    <>
+      <Box pt={8} pb={6} px={{ xs: 2, md: 10 }}>
+        {/* 🖼 Header Image + Title */}
         <Box
           sx={{
             position: "relative",
-            zIndex: 1,
-            textAlign: "center",
-            color: "#fff",
+            borderRadius: 4,
+            overflow: "hidden",
+            mb: 6,
+            backgroundImage: `url('${blog?.imgUrl || getRandomDefaultImg()}')`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            height: 320,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            "&::before": {
+              content: '""',
+              position: "absolute",
+              inset: 0,
+              background: "rgba(0,0,0,0.4)",
+              backdropFilter: "blur(6px)",
+            },
           }}
         >
-          <Typography variant="h4" fontWeight={700}>
-            {blog?.title}
-          </Typography>
-          <Typography variant="subtitle2" mt={1}>
-            {new Date(blog?.timestamp).toDateString()}
-          </Typography>
-        </Box>
-      </Box>
-
-      {/* 📄 Blog Content + Sidebar */}
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: { xs: "column", md: "row" },
-          gap: 4,
-        }}
-      >
-        {/* ✏️ Blog Main */}
-        <Box sx={{ flex: 3 }}>
           <Box
             sx={{
-              backgroundColor: "transparent",
-              borderRadius: 5,
-              backdropFilter: "blur(16px)",
-              WebkitBackdropFilter: "blur(16px)",
-              border: isDark
-                ? "1px solid rgba(255,255,255,0.08)"
-                : "1px solid rgba(0,0,0,0.08)",
-              boxShadow: isDark
-                ? "0 4px 20px rgba(255,255,255,0.04)"
-                : "0 8px 24px rgba(0,0,0,0.1)",
-              padding: { xs: 3, md: 4 },
-              mb: 6,
+              position: "relative",
+              zIndex: 1,
+              textAlign: "center",
+              color: "#fff",
             }}
           >
-            <Box
-              display="flex"
-              alignItems="center"
-              justifyContent="space-between"
-              mb={2}
-            >
-              <Typography variant="subtitle1" color="text.secondary">
-                By <strong>{blog?.author}</strong>
-              </Typography>
-              {user?.uid === blog?.userId && (
-                <Box display="flex" justifyContent="flex-end" mb={2}>
-                  <GlassButton
-                    variant="contained"
-                    component={Link}
-                    to={`/edit/${blog?.id}`}
-                  >
-                    Edit Blog
-                  </GlassButton>
-                </Box>
-              )}
-              {user?.uid && blog?.userId && (
-                <FollowButton targetUserId={blog.userId} />
-              )}
-            </Box>
+            <Typography variant="h4" fontWeight={700}>
+              {blog?.title}
+            </Typography>
+            <Typography variant="h7">{blog?.subtitle}</Typography>
+            <Typography variant="subtitle2" mt={1}>
+              {new Date(blog?.timestamp).toDateString()}
+            </Typography>
+          </Box>
+        </Box>
 
+        {/* 📄 Blog Content + Sidebar */}
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: { xs: "column", md: "row" },
+            gap: 4,
+          }}
+        >
+          {/* ✏️ Blog Main */}
+          <Box sx={{ flex: 3 }}>
             <Box
-              display="flex"
-              alignItems="center"
-              justifyContent="space-between"
-              px={2}
-              py={1}
-              mt={2}
-              mb={3}
-              borderRadius={2}
               sx={{
-                backgroundColor: isDark
-                  ? "rgba(255,255,255,0.04)"
-                  : "rgba(0,0,0,0.03)",
+                backgroundColor: "transparent",
+                borderRadius: 5,
+                backdropFilter: "blur(16px)",
+                WebkitBackdropFilter: "blur(16px)",
                 border: isDark
                   ? "1px solid rgba(255,255,255,0.08)"
-                  : "1px solid rgba(0,0,0,0.05)",
+                  : "1px solid rgba(0,0,0,0.08)",
+                boxShadow: isDark
+                  ? "0 4px 20px rgba(255,255,255,0.04)"
+                  : "0 8px 24px rgba(0,0,0,0.1)",
+                padding: { xs: 3, md: 4 },
+                mb: 6,
               }}
             >
-              <LikeButton blogId={id} user={user} />
+              <Box
+                display="flex"
+                alignItems="center"
+                justifyContent="space-between"
+                mb={2}
+              >
+                <Typography variant="subtitle1" color="text.secondary">
+                  By <strong>{blog?.author}</strong>
+                </Typography>
+                {user?.uid === blog?.userId && (
+                  <Box display="flex" justifyContent="flex-end" gap={2} mb={2}>
+                    <GlassButton
+                      variant="contained"
+                      component={Link}
+                      to={`/edit/${blog?.id}`}
+                    >
+                      Edit Blog
+                    </GlassButton>
+                    <GlassButton
+                      color="error"
+                      onClick={() => setOpenDeleteDialog(true)}
+                    >
+                      Delete Blog
+                    </GlassButton>
+                  </Box>
+                )}
+                {user?.uid && blog?.userId && (
+                  <FollowButton targetUserId={blog.userId} />
+                )}
+              </Box>
 
               <Box
                 display="flex"
                 alignItems="center"
-                gap={1}
-                color="text.secondary"
+                justifyContent="space-between"
+                px={2}
+                py={1}
+                mt={2}
+                mb={3}
+                borderRadius={2}
+                sx={{
+                  backgroundColor: isDark
+                    ? "rgba(255,255,255,0.04)"
+                    : "rgba(0,0,0,0.03)",
+                  border: isDark
+                    ? "1px solid rgba(255,255,255,0.08)"
+                    : "1px solid rgba(0,0,0,0.05)",
+                }}
               >
-                <VisibilityIcon fontSize="small" />
-                <Typography variant="body2">
-                  {blog?.views?.toLocaleString() || 0} views
-                </Typography>
+                <LikeButton blogId={id} user={user} />
+
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  gap={1}
+                  color="text.secondary"
+                >
+                  <VisibilityIcon fontSize="small" />
+                  <Typography variant="body2">
+                    {formatViews(blog?.views)} views
+                  </Typography>
+                </Box>
               </Box>
+
+              <Typography
+                variant="body1"
+                sx={{
+                  whiteSpace: "pre-line",
+                  lineHeight: 1.7,
+                  fontSize: "1.1rem",
+                  color: isDark ? "#ddd" : "#333",
+                  maxWidth: "100%",
+                  mb: 3,
+                }}
+                dangerouslySetInnerHTML={{ __html: blog?.description }}
+              />
             </Box>
 
-            <Typography
-              variant="body1"
-              sx={{
-                whiteSpace: "pre-line",
-                lineHeight: 1.7,
-                fontSize: "1.1rem",
-                color: isDark ? "#ddd" : "#333",
-                maxWidth: "100%",
-                mb: 3,
-              }}
-              dangerouslySetInnerHTML={{ __html: blog?.description }}
-            />
+            <CommentSection blogId={id} user={user} />
           </Box>
 
-          <CommentSection blogId={id} user={user} />
-        </Box>
-
-        {/* 🔍 Sidebar */}
-        <Box sx={{ flex: 1 }}>
-          <Categories />
-          <Box mt={4}>
-            <MostPopular blogs={blogs} />
+          {/* 🔍 Sidebar */}
+          <Box sx={{ flex: 1 }}>
+            <Categories />
+            <Box mt={4}>
+              <MostPopular blogs={blogs} />
+            </Box>
           </Box>
         </Box>
       </Box>
-    </Box>
+      <ConfirmDialog
+        open={openDeleteDialog}
+        onClose={() => setOpenDeleteDialog(false)}
+        onConfirm={handleDelete}
+        loading={deleting}
+        subject="blog post" // ✅ automatically updates title, description, and confirm button
+      />
+    </>
   );
 };
 
